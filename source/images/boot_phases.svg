@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="46cm" height="12cm" viewBox="119 339 901 223" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <g id="Background">
+    <g transform="matrix(1.05718,0,0,1,-17.0982,0)">
+      <rect style="fill: #ffffff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="300" y="340" width="680" height="220" rx="0" ry="0"/>
+      <text font-size="12.7998" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="640" y="453.881">
+        <tspan x="640" y="453.881"></tspan>
+      </text>
+    </g>
+    <g>
+      <rect style="fill: #ffffff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke-dasharray: 10; stroke: #000000" x="120" y="400" width="120" height="120" rx="0" ry="0"/>
+      <text font-size="16.9331" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="180" y="454.551">
+        <tspan x="180" y="454.551">Board</tspan>
+        <tspan x="180" y="475.718">Controller</tspan>
+      </text>
+    </g>
+    <g>
+      <rect style="fill: #ffffff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="340" y="400" width="120" height="120" rx="0" ry="0"/>
+      <text font-size="16.9331" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="400" y="465.134">
+        <tspan x="400" y="465.134">Immutable</tspan>
+      </text>
+    </g>
+    <text font-size="16.9331" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="322.121" y="376.465">
+      <tspan x="322.121" y="376.465">Application Processor</tspan>
+    </text>
+    <g>
+      <rect style="fill: #ffffff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="520" y="400" width="120" height="120" rx="0" ry="0"/>
+      <text font-size="16.9331" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="580" y="443.968">
+        <tspan x="580" y="443.968">Secure</tspan>
+        <tspan x="580" y="465.135">Platform</tspan>
+        <tspan x="580" y="486.301">Firmware</tspan>
+      </text>
+    </g>
+    <g>
+      <rect style="fill: #ffffff; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x="700" y="400" width="120" height="120" rx="0" ry="0"/>
+      <text font-size="16.9331" style="fill: #000000; fill-opacity: 1; stroke: none;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="760" y="454.551">
+        <tspan x="760" y="454.551">OS</tspan>
+        <tspan x="760" y="475.718">Bootloader</tspan>
+      </text>
+    </g>
+    <ellipse style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" cx="921.591" cy="459.813" rx="5.81279" ry="5.81279"/>
+    <g>
+      <line style="fill: none; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x1="460" y1="460" x2="510.264" y2="460"/>
+      <polygon style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" fill-rule="evenodd" points="517.764,460 507.764,465 510.264,460 507.764,455 "/>
+    </g>
+    <g>
+      <line style="fill: none; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x1="640" y1="460" x2="690.264" y2="460"/>
+      <polygon style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" fill-rule="evenodd" points="697.764,460 687.764,465 690.264,460 687.764,455 "/>
+    </g>
+    <g>
+      <line style="fill: none; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x1="820" y1="460" x2="879.164" y2="460"/>
+      <polygon style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" fill-rule="evenodd" points="886.664,460 876.664,465 879.164,460 876.664,455 "/>
+    </g>
+    <g>
+      <line style="fill: none; stroke-opacity: 1; stroke-width: 2; stroke: #000000" x1="240" y1="460" x2="330.264" y2="460"/>
+      <polygon style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" fill-rule="evenodd" points="337.764,460 327.764,465 330.264,460 327.764,455 "/>
+    </g>
+    <ellipse style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" cx="943.216" cy="459.517" rx="5.81279" ry="5.81279"/>
+    <ellipse style="fill: #000000; fill-opacity: 1; stroke-opacity: 1; stroke-width: 2; stroke: #000000" cx="965.216" cy="459.517" rx="5.81279" ry="5.81279"/>
+  </g>
+</svg>

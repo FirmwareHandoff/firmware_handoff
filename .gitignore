@@ -1,0 +1,4 @@
+build
+*.swp
+*.swo
+source/images/*.pdf
