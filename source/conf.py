@@ -108,6 +108,7 @@ htmlhelp_basename = 'firmware_handoffdoc'
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
+    'pointsize': '11pt',
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
