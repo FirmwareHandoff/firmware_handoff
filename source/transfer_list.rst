@@ -7,8 +7,9 @@ Transfer list
 =============
 
 The TL is composed of a TL header which is followed by sequence of Transfer
-Entries (TE). The whole TL is PA-contiguous, the TL header and all the TEs are
-16-byte aligned. The TL header specifies the number of bytes occupied by the
+Entries (TE). The whole TL is contiguous in physical address space. The TL
+header and all the TEs are 16-byte aligned (we use align16() to denote this).
+The TL header specifies the number of bytes occupied by the
 TL. The TEs are defined in :numref:`sec_tl_entry_hdr` and
 :numref:`sec_std_entries`. Each TE carries a header which contains an
 identifier, *tag_id*, that is used to determine the content of the associated
@@ -113,7 +114,7 @@ the next TE (next_base_addr) is the following:
 
 .. code-block:: C
 
-   next_base_addr = (cur_base_addr + cur_entry_size + 0xf) & ~((uintptr_t)0xf)
+   next_base_addr = align16(cur_base_addr + cur_entry_size)
 
 The TE header is defined in :numref:`tab_te_header`.
 
