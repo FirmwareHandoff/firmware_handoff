@@ -1,0 +1,23 @@
+name: Build specification
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: build pdf and html
+    runs-on: ubuntu-latest
+    environment: pr_ci
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo apt-get install -y librsvg2-bin python3-sphinx latexmk texlive-latex-extra
+      - run: make latexpdf
+      - run: make html
+
+      - name: Archive pdf
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware_handoff.pdf
+          path: build/latex/Firmware_handoff.pdf
