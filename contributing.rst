@@ -32,5 +32,5 @@ A contribution must be acknowledged by every maintainer before being merged.
 
 .. _DCO: DCO
 .. _LICENSE: LICENSE
-.. _Maintainers: Maintainers.rst
+.. _Maintainers: maintainers.rst
 

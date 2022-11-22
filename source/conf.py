@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Firmware handoff'
+project = 'firmware handoff'
 copyright = '2022, Firmware handoff contributors'
 author = 'Firmware handoff contributors'
 
@@ -102,12 +102,13 @@ html_static_path = ['templatestatic']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Firmware_handoffdoc'
+htmlhelp_basename = 'firmware_handoffdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
+    'pointsize': '11pt',
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
@@ -129,7 +130,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Firmware_handoff.tex', 'Firmware handoff specification',
+    (master_doc, 'firmware_handoff.tex', 'Firmware handoff specification',
      '', 'manual'),
 ]
 
@@ -150,8 +151,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Firmware_handoff', 'Firmware_handoff Documentation',
-     author, 'Firmware_handoff', 'One line description of project.',
+    (master_doc, 'firmware_handoff', 'Firmware_handoff Documentation',
+     author, 'firmware_handoff', 'One line description of project.',
      'Miscellaneous'),
 ]
 
