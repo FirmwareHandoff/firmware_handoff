@@ -20,4 +20,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: firmware_handoff.pdf
-          path: build/latex/Firmware_handoff.pdf
+          path: build/latex/firmware_handoff.pdf
