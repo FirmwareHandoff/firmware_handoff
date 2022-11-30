@@ -10,7 +10,7 @@ Transfer list
 
 The TL is composed of a TL header which is followed by sequence of Transfer
 Entries (TE). The whole TL is contiguous in physical address space. The TL
-header and all the TEs are 16-byte aligned (we use align16() to denote this).
+header and all the TEs are 8-byte aligned (we use `align8()` to denote this).
 The TL header specifies the number of bytes occupied by the
 TL. The TEs are defined in :numref:`sec_tl_entry_hdr` and
 :numref:`sec_std_entries`. Each TE carries a header which contains an
@@ -19,9 +19,9 @@ TE. The TL header is located at `tl_base_pa`. The `tl_base_pa` is passed in the
 register allocated for that handoff boundary (as specified in
 :numref:`handoff_arch_bindings`). A
 depiction of the TL is present in :numref:`fig_list` , there the first TE in
-the list (TE[0]) is shown to start at the end of the TL header (tl_base_pa +
-16). The second TE in the list (TE[1]) starts at the next multiple of 16, after
-the end of the TE[0].
+the list (TE[0]) is shown to start at the end of the TL header
+(`tl_base_pa + 8`). The second TE in the list (TE[1]) starts at the next multiple
+of 8, after the end of the TE[0].
 
 
 .. _fig_list:
@@ -34,11 +34,13 @@ the end of the TE[0].
 Transfer list requirements
 --------------------------
 
-**R1:** The tl_base_pa address must be at a 16-byte boundary.
+**R1:** The tl_base_pa address must be at a 8-byte boundary.
 
 **R2:** All fields defined in this specification must be stored in memory with little-endian byte order.
 
-**R3:** The base address of a TE must be the 16-byte aligned address immediately after the end of the previous entry (or TL header, if the TE is the first entry on the TL).
+**R3:** The base address of a TE must be the 8-byte aligned address immediately after the end of the previous entry (or TL header, if the TE is the first entry on the TL).
+
+**R4:** When relocating the TL, the offset from `tl_base_pa` to the nearest alignment boundary specified by the `alignment` field in the TL header must be preserved.
 
 
 Transfer list header
@@ -81,20 +83,20 @@ changes will be backwards-compatible to older readers.
      - 0x6
      - The size of this TL header in bytes. This field is set to 16 for the TL header layout described in this version of the table.
 
-   * - reserved
+   * - alignment
      - 0x1
      - 0x7
-     - Reserved, must be zero.
+     - The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is 8 so this value should be set to 3. It should be updated whenever a new TE is added with a larger requirement than the current value.
 
    * - size
      - 0x4
      - 0x8
-     - The number of bytes occupied by the TL. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. It must be a multiple of 16 (i.e. it includes the inter-TE padding after the end of the last TE). This field must be updated when any entry is added to the TL.
+     - The number of bytes occupied by the TL. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. It must be a multiple of 8 (i.e. it includes the inter-TE padding after the end of the last TE). This field must be updated when any entry is added to the TL.
 
    * - max_size
      - 0x4
      - 0xc
-     - The maximum number of bytes that the TL can occupy. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocate the TL and update this field accordingly, provided that the TL requirements are respected. This field must be a multiple of 16.
+     - The maximum number of bytes that the TL can occupy. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocate the TL and update this field accordingly, provided that the TL requirements are respected. This field must be a multiple of 8.
 
 
 .. _sec_tl_entry_hdr:
@@ -104,17 +106,17 @@ TL entry header
 
 All TEs start with an entry header followed by a data section.
 
-Note: the size of an entry (hdr_size + data_size) is not mandatorily a 16-byte
+Note: the size of an entry (hdr_size + data_size) is not mandatorily an 8-byte
 multiple. When traversing the TL firmware must compute the next TE address following
 R3.
 
-For example, assume the current TE address is `cur_base_addr` and its size is
-`cur_entry_size`.  Using C language notation, a derivation of the base address of
-the next TE (next_base_addr) is the following:
+For example, assume the current TE is `te` and its address is `te_base_addr`.  Using
+C language notation, a derivation of the base address of the next TE
+(next_base_addr) is the following:
 
 .. code-block:: C
 
-   next_base_addr = align16(cur_base_addr + cur_entry_size)
+   next_base_addr = align8(te_base_addr + te.hdr_size + te.data_size)
 
 The TE header is defined in :numref:`tab_te_header`.
 
@@ -129,24 +131,19 @@ The TE header is defined in :numref:`tab_te_header`.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The entry type identifier.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - The size of this entry header in bytes. This field is set to 8 for the TE header layout described in this version of the table.
 
    * - data_size
      - 0x4
-     - 0x8
-     - The exact size of the data content in bytes, not including inter-TE padding.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The exact size of the data content in bytes, not including inter-TE padding. May be 0.
 
 
 Entry type ranges
@@ -205,7 +202,12 @@ Empty entry layout (XFERLIST_VOID)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The empty or void entry should not contain any information to be consumed by any firmware stage.
-The intent of the void entry type is for information to be removed from the list without subsequent entries having to be relocated.
+The intent of the void entry type is to remove information from the list without needing to
+relocate subsequent entries, or to create padding for entries that require a specific alignment.
+Void entries may be freely overwritten with new TEs, provided the resulting TL remains valid
+(i.e. a void entry can only be overwritten by a TE of equal or smaller size; if the size is more
+than 8 bytes smaller, a new void entry must be created behind the new TE to cover the remaining
+space up to the next TE).
 
 .. _tab_void:
 .. list-table:: Empty type layout
@@ -217,24 +219,21 @@ The intent of the void entry type is for information to be removed from the list
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **0**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the void space in bytes. May be 0. For XFERLIST_VOID,
+     data_size *MUST* be a multiple of 8 (i.e. there must be no space left to
+     inter-TE padding after this TE).
 
    * - void_data
      - data_size
@@ -261,24 +260,19 @@ the flattened devicetree (FDT) [DT]_ representation.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **1**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the FDT in bytes.
 
    * - fdt
      - data_size
@@ -306,24 +300,19 @@ the TL and following the HOB list requirements defined in [PI]_.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **2**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the HOB block in bytes.
 
    * - hob_block
      - data_size
@@ -351,24 +340,19 @@ specified in [PI]_.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **3**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the HOB list in bytes.
 
    * - hob_list
      - data_size
@@ -382,12 +366,15 @@ ACPI table aggregate entry layout (XFERLIST_ACPI_AGGR)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This entry type holds one or more ACPI tables. The first table must start at
-offset `hdr_size`, from the start of the entry. Any subsequent ACPI tables
-must be located at the next 16-byte alligned address following the preceding
-ACPI table. Note that each ACPI table has a `Length` field in the ACPI table
-header [ACPI]_, which must be used to determine the end of the ACPI table.
-The `data_size` value must be set such that the last ACPI table, in this entry,
-ends at offset `hdr_size + data_size`, from the start of the entry.
+offset `hdr_size` from the start of the entry. Since ACPI tables usually have an
+alignment requirement larger than 8, writers may first need to create an
+XFERLIST_VOID padding entry so that the subsequent `te_base_addr + te.hdr_size`
+will be correctly aligned. Any subsequent ACPI tables must be located at the
+next 16-byte alligned address following the preceding ACPI table. Note that each
+ACPI table has a `Length` field in the ACPI table header [ACPI]_, which must be
+used to determine the end of the ACPI table.  The `data_size` value must be set
+such that the last ACPI table in this entry ends at offset
+`hdr_size + data_size` from the start of the entry.
 
 .. _tab_acpi_aggr:
 .. list-table:: ACPI table aggregate type layout
@@ -399,26 +386,23 @@ ends at offset `hdr_size + data_size`, from the start of the entry.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **4**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of all included ACPI tables + padding in bytes.
 
    * - acpi_tables
      - data_size
      - hdr_size
      - One or more ACPI tables.
+
+.. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
