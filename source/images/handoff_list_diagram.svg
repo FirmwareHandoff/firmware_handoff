@@ -525,7 +525,7 @@ span.MathJax_SVG { position: static !important; }</xhtml:style>
          sodipodi:role="line"
          id="tspan358"
          x="394.19507"
-         y="228.36078">TE[1].base_pa = align16(</tspan><tspan
+         y="228.36078">TE[1].base_pa = align8(</tspan><tspan
          sodipodi:role="line"
          id="tspan360"
          x="394.19507"
@@ -552,7 +552,7 @@ span.MathJax_SVG { position: static !important; }</xhtml:style>
            sodipodi:role="line"
            id="tspan352"
            x="444.91318"
-           y="409.5">TE[n].base_pa = align16(</tspan><tspan
+           y="409.5">TE[n].base_pa = align8(</tspan><tspan
            sodipodi:role="line"
            x="444.91318"
            y="424.5"
