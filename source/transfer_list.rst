@@ -20,7 +20,7 @@ register allocated for that handoff boundary (as specified in
 :numref:`handoff_arch_bindings`). A
 depiction of the TL is present in :numref:`fig_list` , there the first TE in
 the list (TE[0]) is shown to start at the end of the TL header (tl_base_pa +
-32). The second TE in the list (TE[1]) starts at the next multiple of 16, after
+16). The second TE in the list (TE[1]) starts at the next multiple of 16, after
 the end of the TE[0].
 
 
@@ -68,35 +68,30 @@ version field determines the contents of the handoff start header.
      - 0x4
      - The checksum is used to ensure the data contained within the list is intact. The checksum is set to a value such that the sum over every byte in the {tl_base_pa, …, tl_base_pa + size -1} address range, modulo 256, is equal to 0.
 
-   * - reserved
-     - 0x3
-     - 0x5
-     - Reserved, must be zero.
-
    * - version
-     - 0x4
-     - 0x8
+     - 0x1
+     - 0x5
      - The version of the TL header. This field is set to 1 for the TL header layout described in this version of the table.
 
    * - hdr_size
-     - 0x4
-     - 0xc
-     - The size of this TL header in bytes. This field is set to 0x20 for the TL header layout described in this version of the table.
+     - 0x1
+     - 0x6
+     - The size of this TL header in bytes. This field is set to 0x10 for the TL header layout described in this version of the table.
+
+   * - reserved
+     - 0x1
+     - 0x7
+     - Reserved, must be zero.
 
    * - size
      - 0x4
-     - 0x10
+     - 0x8
      - The number of bytes occupied by the TL. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. This field must be updated when any entry is added to the TL.
 
    * - max_size
      - 0x4
-     - 0x14
+     - 0xc
      - The maximum number of bytes that the TL can occupy. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocated the TL and update this field accordingly, provided that the TL requirements are respected.
-
-   * - reserved
-     - 0x8
-     - 0x18
-     - Reserved, must be zero.
 
 
 .. _sec_tl_entry_hdr:
@@ -143,7 +138,7 @@ The TE header is defined in :numref:`tab_te_header`.
    * - data_size
      - 0x4
      - 0x8
-     - The size of the data content in bytes.
+     - The exact size of the data content in bytes, not including inter-TE padding.
 
    * - reserved
      - 0x4
