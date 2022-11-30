@@ -361,15 +361,49 @@ Inputs:
    to `tl.checksum` (`new_tl_base + 0x4`).
 
 
-Entry type ranges
------------------
+Entry type allocation
+---------------------
 
-The content of the data section is determined by the tag id. The tag id space contains two ranges:
+Tag IDs must be allocated in this specification before use. A new tag ID can be
+allocated by submitting a pull request to this repository that adds a
+description of the respective TE data layout to this specification. Tag IDs do
+not have to be allocated in order. Submitters are encouraged to try to group
+tag IDs together in logical clusters at 256-aligned boundaries (e.g. all tags
+related to a particular chipset or to a particular firmware project could use
+adjacent tag numbers), but there are no predefined ranges and no reservations
+of tag ranges for specific use.
 
- #. Standard range, and
- #. Non-standard range
+Tags are expected to have a simple layout (representable by a C structure) and
+each tag should only represent data for a single logical concept. Data for
+multiple distinct concepts should be split across different tags, even if
+they're always expected to appear together on the first platform adding the tag
+(to encourage reusability in different situations). The same tag ID may occur
+multiple times in the TL to represent multiple instances of the same kind of
+object. Tag layouts (including the meaning of all fields) are considered stable
+after being added to this specification and may never be changed in a backwards
+incompatible way. If a backwards-incompatible change is desired, a new tag ID
+should be allocated for the new version of the layout instead.
+(Backwards-compatible ways to change existing layouts could be increasing the
+data_length to append new fields behind the structure or using fields in the
+layout that were previously marked as reserved, as long as the TE would still
+be considered valid for older implementations that ignore these new fields. TE
+layouts which have been changed like that must clearly document which fields
+have been added after the first version.)
 
-The `tag_id` ranges are described in :numref:`tab_tag_id_ranges`.
+The {0xff_f000, ..., 0xff_ffff} range is reserved for non-standardized use.
+Anyone is free to use tags from that range for any custom TE layout without
+adding their definitions to this specification first. The use of this range is
+*strongly discouraged* for anything other than local experiments or code that
+will only ever be used in closed-source components owned by the entity
+controlling the entire final firmware image. In particular, a TE just
+containing platform-specific data or internal structures specific to a single
+firmware implementation is no reason not to allocate a standardized tag for it
+in this specification. Since standards often emerge organically, the goal is to
+create unique tag IDs for everything just in case it turns out to be useful in
+more applications than initially anticipated. Basically, whenever you're
+submitting code for a new TE layout to any public open-source project, that's
+probably a good indication that you should allocate a tag ID for it in this
+specification.
 
 .. _tab_tag_id_ranges:
 
@@ -379,27 +413,19 @@ The `tag_id` ranges are described in :numref:`tab_tag_id_ranges`.
    * - tag ID range
      - Description
 
-   * - 0x0 -- 0xf_ffff
-     - Standard tag id range. Any tag id in this range must first be allocated in this specification before being used. The allocation of the tag id requires the entry layout to be defined as well.
+   * - 0x0 -- 0x7f_ffff
+     - Standardized range. Any tag ID in this range must first be allocated in this specification before being used. The allocation of the tag ID requires the entry layout to be defined as well.
 
+   * - 0x80_0000 -- 0xff_efff
+     - Reserved. (Can later be used to extend standardized range if necessary.)
 
-   * - 0x10_0000 -- 0x10_ffff
-     - Non-standard range. A platform firmware integrator can create entries in this range. Different platforms are allowed to have tag ids in this range with distinct data formats. Entries in this range are not standardized.
-
-   * - 0x11_0000 -- 0xffff_ffff
-     - Reserved
+   * - 0xff_f000 -- 0xff_ffff
+     - Non-standardized range. Tag IDs in this range can be used without allocation in this specification. Using this range for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator is strongly discouraged.
 
 .. _sec_std_entries:
 
 Standard transfer entries
 -------------------------
-
-The TEs have a `tag_id` in the {0, ..., 0xf_ffff} set. Both
-the tag_id of a standard entry as well as the entry layout
-must be defined in this specification before being used.
-New entries are expected to have a simple layout. Complex
-data should be represented in a self-describing data
-structure, such as the FDT [DT]_.
 
 The following entry types are currently defined:
 
@@ -408,8 +434,6 @@ The following entry types are currently defined:
 - single HOB block entry: tag_id = 2 (:numref:`hob_block_entry`).
 - HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
 - ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
-
-All other standard `tag_id` values are reserved by this specification.
 
 .. _void_entry:
 
