@@ -1,6 +1,8 @@
 .. SPDX-License-Identifier: CC-BY-SA-4.0
 .. SPDX-FileCopyrightText: Copyright The Firmware Handoff Specification Contributors
 
+.. default-role:: code
+
 .. _sec_tl:
 
 Transfer list
@@ -12,8 +14,8 @@ header and all the TEs are 16-byte aligned (we use align16() to denote this).
 The TL header specifies the number of bytes occupied by the
 TL. The TEs are defined in :numref:`sec_tl_entry_hdr` and
 :numref:`sec_std_entries`. Each TE carries a header which contains an
-identifier, *tag_id*, that is used to determine the content of the associated
-TE. The TL header is located at *tl_base_pa*. The *tl_base_pa* is passed in the
+identifier, `tag_id`, that is used to determine the content of the associated
+TE. The TL header is located at `tl_base_pa`. The `tl_base_pa` is passed in the
 register allocated for that handoff boundary (as specified in
 :numref:`handoff_arch_bindings`). A
 depiction of the TL is present in :numref:`fig_list` , there the first TE in
@@ -108,8 +110,8 @@ Note: the size of an entry (hdr_size + data_size) is not mandatorily a 16-byte
 multiple. When traversing the TL firmware must compute the next TE address following
 R3.
 
-For example, assume the current TE address is *cur_base_addr* and its size is
-*cur_entry_size*.  Using C language notation, a derivation of the base address of
+For example, assume the current TE address is `cur_base_addr` and its size is
+`cur_entry_size`.  Using C language notation, a derivation of the base address of
 the next TE (next_base_addr) is the following:
 
 .. code-block:: C
@@ -157,7 +159,7 @@ The content of the data section is determined by the tag id. The tag id space co
  #. Standard range, and
  #. Non-standard range
 
-The *tag_id* ranges are described in :numref:`tab_tag_id_ranges`.
+The `tag_id` ranges are described in :numref:`tab_tag_id_ranges`.
 
 .. _tab_tag_id_ranges:
 
@@ -182,7 +184,7 @@ The *tag_id* ranges are described in :numref:`tab_tag_id_ranges`.
 Standard transfer entries
 -------------------------
 
-The TEs have a *tag_id* in the {0, ..., 0xf_ffff} set. Both
+The TEs have a `tag_id` in the {0, ..., 0xf_ffff} set. Both
 the tag_id of a standard entry as well as the entry layout
 must be defined in this specification before being used.
 New entries are expected to have a simple layout. Complex
@@ -197,7 +199,7 @@ The following entry types are currently defined:
 - HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
 - ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
 
-All other standard *tag_id* values are reserved by this specification.
+All other standard `tag_id` values are reserved by this specification.
 
 .. _void_entry:
 
@@ -382,12 +384,12 @@ ACPI table aggregate entry layout (XFERLIST_ACPI_AGGR)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This entry type holds one or more ACPI tables. The first table must start at
-offset *hdr_size*, from the start of the entry. Any subsequent ACPI tables
+offset `hdr_size`, from the start of the entry. Any subsequent ACPI tables
 must be located at the next 16-byte alligned address following the preceding
-ACPI table. Note that each ACPI table has a *Length* field in the ACPI table
+ACPI table. Note that each ACPI table has a `Length` field in the ACPI table
 header [ACPI]_, which must be used to determine the end of the ACPI table.
-The *data_size* value must be set such that the last ACPI table, in this entry,
-ends at offset *hdr_size + data_size*, from the start of the entry.
+The `data_size` value must be set such that the last ACPI table, in this entry,
+ends at offset `hdr_size + data_size`, from the start of the entry.
 
 .. _tab_acpi_aggr:
 .. list-table:: ACPI table aggregate type layout
