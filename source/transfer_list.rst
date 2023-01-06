@@ -1,6 +1,8 @@
 .. SPDX-License-Identifier: CC-BY-SA-4.0
 .. SPDX-FileCopyrightText: Copyright The Firmware Handoff Specification Contributors
 
+.. default-role:: code
+
 .. _sec_tl:
 
 Transfer list
@@ -8,18 +10,18 @@ Transfer list
 
 The TL is composed of a TL header which is followed by sequence of Transfer
 Entries (TE). The whole TL is contiguous in physical address space. The TL
-header and all the TEs are 16-byte aligned (we use align16() to denote this).
+header and all the TEs are 8-byte aligned (we use `align8()` to denote this).
 The TL header specifies the number of bytes occupied by the
 TL. The TEs are defined in :numref:`sec_tl_entry_hdr` and
 :numref:`sec_std_entries`. Each TE carries a header which contains an
-identifier, *tag_id*, that is used to determine the content of the associated
-TE. The TL header is located at *tl_base_pa*. The *tl_base_pa* is passed in the
+identifier, `tag_id`, that is used to determine the content of the associated
+TE. The TL header is located at `tl_base_pa`. The `tl_base_pa` is passed in the
 register allocated for that handoff boundary (as specified in
 :numref:`handoff_arch_bindings`). A
 depiction of the TL is present in :numref:`fig_list` , there the first TE in
-the list (TE[0]) is shown to start at the end of the TL header (tl_base_pa +
-32). The second TE in the list (TE[1]) starts at the next multiple of 16, after
-the end of the TE[0].
+the list (TE[0]) is shown to start at the end of the TL header
+(`tl_base_pa + 8`). The second TE in the list (TE[1]) starts at the next multiple
+of 8, after the end of the TE[0].
 
 
 .. _fig_list:
@@ -32,11 +34,13 @@ the end of the TE[0].
 Transfer list requirements
 --------------------------
 
-**R1:** The tl_base_pa address must be at a 16-byte boundary.
+**R1:** The tl_base_pa address must be at a 8-byte boundary.
 
 **R2:** All fields defined in this specification must be stored in memory with little-endian byte order.
 
-**R3:** The base address of a TE must be the 16-byte aligned address immediately after the end of the previous entry (or TL header, if the TE is the first entry on the TL).
+**R3:** The base address of a TE must be the 8-byte aligned address immediately after the end of the previous entry (or TL header, if the TE is the first entry on the TL).
+
+**R4:** When relocating the TL, the offset from `tl_base_pa` to the nearest alignment boundary specified by the `alignment` field in the TL header must be preserved.
 
 
 Transfer list header
@@ -45,7 +49,10 @@ Transfer list header
 A TL must begin with a TL header. The layout of the TL header is shown in
 :numref:`tab_tl_header`.  The presence of a TL header can be verified by
 inspecting the signature field which must contain the 0x6e_d0ff value.  The
-version field determines the contents of the handoff start header.
+version field determines the contents of the handoff start header. The version
+will only be changed by an update to this specification when new TL header or
+TE header fields are defined (i.e. not when allocating new tag IDs), and all
+changes will be backwards-compatible to older readers.
 
 .. _tab_tl_header:
 .. list-table:: TL header
@@ -59,42 +66,37 @@ version field determines the contents of the handoff start header.
    * - signature
      - 0x4
      - 0x0
-     - The value of signature must be 0x6e_d0ff.
+     - The value of signature must be `0x6e_d0ff`.
 
    * - checksum
      - 0x1
      - 0x4
-     - The checksum is used to ensure the data contained within the list is intact. The checksum is set to a value such that the sum over every byte in the {tl_base_pa, …, tl_base_pa + size -1} address range, modulo 256, is equal to 0.
-
-   * - reserved
-     - 0x3
-     - 0x5
-     - Reserved, must be zero.
+     - The checksum is used to ensure the data contained within the list is intact. The checksum is set to a value such that the sum over every byte in the {`tl_base_pa`, …, `tl_base_pa + size - 1`} address range, modulo 256, is equal to 0. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as 0. Note that the checksum includes the TL header, all TEs and the inter-TE padding, but not the range reserved for future TE additions up to max_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.)
 
    * - version
-     - 0x4
-     - 0x8
-     - The version of the TL header. This field is set to 1 for the TL header layout described in this version of the table.
+     - 0x1
+     - 0x5
+     - The version of the TL header. This field is set to 1 for the TL header layout described in this version of the table. Code that encounters a TL with a version higher than it knows to support may still read the TL and all its TEs, and assume that it is backwards-compatible to previous versions (ignoring any extra bytes in a potentially larger TL or TE header). However, code may not append new entries to a TL unless it knows how to append entries for the specified version.
 
    * - hdr_size
-     - 0x4
-     - 0xc
-     - The size of this TL header in bytes. This field is set to 0x20 for the TL header layout described in this version of the table.
+     - 0x1
+     - 0x6
+     - The size of this TL header in bytes. This field is set to 16 for the TL header layout described in this version of the table.
+
+   * - alignment
+     - 0x1
+     - 0x7
+     - The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is 8 so this value should be set to 3. It should be updated whenever a new TE is added with a larger requirement than the current value.
 
    * - size
      - 0x4
-     - 0x10
-     - The number of bytes occupied by the TL. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. This field must be updated when any entry is added to the TL.
+     - 0x8
+     - The number of bytes occupied by the TL. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. It must be a multiple of 8 (i.e. it includes the inter-TE padding after the end of the last TE). This field must be updated when any entry is added to the TL.
 
    * - max_size
      - 0x4
-     - 0x14
-     - The maximum number of bytes that the TL can occupy. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocated the TL and update this field accordingly, provided that the TL requirements are respected.
-
-   * - reserved
-     - 0x8
-     - 0x18
-     - Reserved, must be zero.
+     - 0xc
+     - The maximum number of bytes that the TL can occupy. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocate the TL and update this field accordingly, provided that the TL requirements are respected. This field must be a multiple of 8.
 
 
 .. _sec_tl_entry_hdr:
@@ -104,17 +106,17 @@ TL entry header
 
 All TEs start with an entry header followed by a data section.
 
-Note: the size of an entry (hdr_size + data_size) is not mandatorily a 16-byte
+Note: the size of an entry (hdr_size + data_size) is not mandatorily an 8-byte
 multiple. When traversing the TL firmware must compute the next TE address following
 R3.
 
-For example, assume the current TE address is *cur_base_addr* and its size is
-*cur_entry_size*.  Using C language notation, a derivation of the base address of
-the next TE (next_base_addr) is the following:
+For example, assume the current TE is `te` and its address is `te_base_addr`.  Using
+C language notation, a derivation of the base address of the next TE
+(next_base_addr) is the following:
 
 .. code-block:: C
 
-   next_base_addr = align16(cur_base_addr + cur_entry_size)
+   next_base_addr = align8(te_base_addr + te.hdr_size + te.data_size)
 
 The TE header is defined in :numref:`tab_te_header`.
 
@@ -129,35 +131,279 @@ The TE header is defined in :numref:`tab_te_header`.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The entry type identifier.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - The size of this entry header in bytes. This field is set to 8 for the TE header layout described in this version of the table.
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The exact size of the data content in bytes, not including inter-TE padding. May be 0.
 
 
-Entry type ranges
------------------
+.. _sec_operations:
 
-The content of the data section is determined by the tag id. The tag id space contains two ranges:
+Standard operations
+-------------------
 
- #. Standard range, and
- #. Non-standard range
+This section describes the valid operations that can be performed on a TL in
+more detail, in order to clarify how to use the various fields and to serve as a
+guideline for implementation.
 
-The *tag_id* ranges are described in :numref:`tab_tag_id_ranges`.
+Validating a TL header
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. default-role:: code
+
+Inputs:
+
+- `tl_base_addr`: Base address of the existing TL.
+
+#. Compare `tl.signature` (`tl_base_addr + 0x0`) to `0x6e_d0ff`. On a mismatch,
+   abort (this is not a valid TL).
+
+#. Compare `tl.version` (`tl_base_addr + 0x5`) to the expected version
+   (currently 1). On a 0, abort (this is not a valid TL). On any other mismatch
+   (i.e. larger than 1), the TL is valid for reading but must not be modified
+   or relocated.
+
+#. *(optional)* Check that `tl.size` (`tl_base_addr + 0x8`) is smaller or equal
+   to `tl.max_size` (`tl_base_addr + 0xc`), and that `tl.max_size` is smaller or
+   equal to the size of the total area reserved for the TL (if known). If not,
+   abort (TL is corrupted).
+
+#. *(optional)* Check that the sum of `tl.size` bytes starting at `tl_base_addr`
+   minus `tl.checksum` is equal to `tl.checksum`. If not, abort (TL is corrupted).
+
+Reading a TL
+^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the existing TL.
+
+#. Calculate `te_base_addr` as `align8(tl_base_addr + tl.hdr_size)`. (Do not
+   hardcode the value for `tl.hdr_size`!)
+
+#. While `te_base_addr - tl_base_addr` is smaller or equal to `tl.size`:
+
+   #. *(optional)* Check that `te_base_addr + te.hdr_size + te.data_size - tl_base_addr`
+      is smaller or equal to `tl.size`, otherwise abort (the TL is corrupted).
+
+   #. If `te.tag_id` (`te_base_addr + 0x0`) is a known tag, interpret the data
+      at `te_base_addr + te.hdr_size` accordingly. (Do not hardcode the value
+      for `te.hdr_size`!)
+
+   #. Add `te.hdr_size + te.data_size` to `te_base_addr`.
+
+Adding a new TE
+^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the TL to add a TE to.
+- `new_tag_id`: ID number of the tag for the new TE.
+- `new_data_size`: Size in bytes of the data to be encapsulated in the TE.
+- [data]: Data to be copied into the TE or generated on the fly.
+
+#. *(optional)* Follow the steps in `Reading a TL`_ to look for a TE where
+   `te.tag_id` is 0 (XFERLIST_VOID) and `te.data_size` is greater or equal to
+   `new_data_size`. If found:
+
+   #. Remember `te.data_size` as `old_void_data_size`.
+
+   #. Use the `te_base_addr` of this tag for the rest of the operation.
+
+   #. Subtract the sum of `align8(new_data_size + 0x8)` bytes starting at
+      `te_base_addr` from `tl.checksum`.
+
+   #. Skip the next step (step 2) with all its substeps.
+
+#. Calculate `te_base_addr` as `tl_base_addr + tl.size`.
+
+   #. If `tl.max_size - tl.size` is smaller than `align8(new_data_size + 0x8)`,
+      abort (not enough room to add TE).
+
+   #. Subtract the sum of the 4 bytes from `tl_base_addr + 0x8` to `tl_base_addr + 0xc`
+      from `tl.checksum`.
+ 
+   #. Add `align8(new_data_size + 0x8)` to `tl.size`.
+
+   #. Add the sum of the 4 bytes from `tl_base_addr + 0x8` to `tl_base_addr + 0xc`
+      to `tl.checksum`.
+
+#. Set `te.tag_id` (`te_base_addr + 0x0`) to `new_tag_id`.
+
+#. Set `te.hdr_size` (`te_base_addr + 0x3`) to `8`.
+
+#. Set `te.data_size` (`te_base_addr + 0x4`) to `new_data_size`.
+
+#. Copy or generate the TE data into `te_base_addr + 0x8`.
+
+#. Add the sum of `align8(new_data_size + 0x8)` bytes starting at `te_base_addr`
+   to `tl.checksum`.
+
+#. If an existing XFERLIST_VOID TE was chosen to be overwritten in step 1, and
+   `old_void_data_size - new_data_size` is greater or equal to 8:
+
+   #. Use `te_base_addr + align8(new_data_size + 0x8)` as the new `te_base_addr`
+      for a new XFERLIST_VOID tag.
+
+   #. Subtract the sum of the 8 bytes from `te_base_addr` to `te_base_addr + 0x8`
+      from `tl.checksum`.
+
+   #. Set `te.tag_id` (`te_base_addr + 0x0`) to `0x0` (XFERLIST_VOID).
+
+   #. Set `te.hdr_size` (`te_base_addr + 0x3`) to `0x8`.
+
+   #. Set `te.data_size` (`te_base_addr + 0x4`) to
+      `old_void_data_size - align8(new_data_size) - 0x8`.
+
+   #. Add the sum of the 8 bytes from `te_base_addr` to `te_base_addr + 0x8`
+      to `tl.checksum`.
+
+Adding a new TE with special data alignment requirement
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the TL to add a TE to.
+- `new_tag_id`: ID number of the tag for the new TE.
+- `new_alignment`: The alignment boundary as a power of 2 that the data must be aligned to.
+- `new_data_size`: Size in bytes of the data to be encapsulated in the TE.
+- [data]: Data to be copied into the TE or generated on the fly.
+
+#. Calculate `alignment_mask` as `(1 << new_alignment) - 1`.
+
+#. If `(tl_base_addr + tl.size) & alignment_mask` is not 0, follow the steps in
+   `Adding a new TE`_ with the following different inputs (bypass the option to
+   overwrite an existing XFERLIST_VOID TE):
+
+   #. `tl_base_addr` remains the same
+
+   #. `new_tag_id` is 0 (XFERLIST_VOID)
+
+   #. `new_data_size` is `(1 << new_alignment) - ((tl_base_addr + tl.size) & alignment_mask) - 0x8`.
+
+   #. No data (i.e. just don't touch the bytes that form the data portion for this TE).
+
+#. Follow the steps in `Adding a new TE`_ with the original inputs (again bypass
+   the option to overwrite an existing XFERLIST_VOID TE).
+
+#. If `new_alignment` is larger than `tl.alignment`:
+
+   #. Subtract `tl.alignment` from `tl.checksum`.
+
+   #. Set `tl.alignment` to `new_alignment`.
+
+   #. Add `tl.alignment` to `tl.checksum`.
+
+Creating a TL
+^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address where to place the new TL.
+- `available_size`: Available size in bytes to reserve for the TL after `tl_base_addr`.
+
+#. Check that `available_size` is larger than 16, otherwise abort.
+
+#. Set `tl.signature` (`tl_base_addr + 0x0`) to `0x6e_d0ff`.
+
+#. Set `tl.checksum` (`tl_base_addr + 0x4`) to 0 (for now).
+
+#. Set `tl.version` (`tl_base_addr + 0x5`) to 1.
+
+#. Set `tl.hdr_size` (`tl_base_addr + 0x6`) to 16.
+
+#. Set `tl.alignment` (`tl_base_addr + 0x7`) to 3.
+
+#. Set `tl.size` (`tl_base_addr + 0x8`) to 16.
+
+#. Set `tl.max_size` (`tl_base_addr + 0xc`) to `available_size`.
+
+#. Calculate the checksum as the sum of all bytes from `tl_base_addr` to
+   `tl_base_addr + 0x10`, and write the result to `tl.checksum`.
+
+Relocating a TL
+^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the existing TL.
+- `target_base`: Base address of the target region to relocate into.
+- `target_size`: Total size in bytes of the target region to relocate into.
+
+#. Calculate `alignment_mask` as `(1 << tl.alignment) - 1`.
+
+#. Calculate the current `alignment_offset` as `tl_base_addr & alignment_mask`.
+
+#. Calculate `new_tl_base` as `(target_base & ~alignment_mask) + alignment_offset`.
+
+#. If `new_tl_base` is below `target_base`, add `alignment_mask + 1` to `new_tl_base`.
+
+#. If `new_tl_base - target_base + tl.size` is larger than `target_size`, abort
+   (not enough space to relocate).
+
+#. Copy `tl.size` bytes from `tl_base_addr` to `new_tl_base`.
+
+#. Subtract the sum of the 4 bytes from `new_tl_base + 0xc` to `new_tl_base + 0x10`
+   from `tl.checksum` (`new_tl_base + 0x4`).
+
+#. Set `tl.max_size` (`new_tl_base + 0xc`) to `target_size - new_tl_base`.
+
+#. Add the sum of the 4 bytes from `new_tl_base + 0xc` to `new_tl_base + 0x10`
+   to `tl.checksum` (`new_tl_base + 0x4`).
+
+
+Entry type allocation
+---------------------
+
+Tag IDs must be allocated in this specification before use. A new tag ID can be
+allocated by submitting a pull request to this repository that adds a
+description of the respective TE data layout to this specification. Tag IDs do
+not have to be allocated in order. Submitters are encouraged to try to group
+tag IDs together in logical clusters at 256-aligned boundaries (e.g. all tags
+related to a particular chipset or to a particular firmware project could use
+adjacent tag numbers), but there are no predefined ranges and no reservations
+of tag ranges for specific use.
+
+Tags are expected to have a simple layout (representable by a C structure) and
+each tag should only represent data for a single logical concept. Data for
+multiple distinct concepts should be split across different tags, even if
+they're always expected to appear together on the first platform adding the tag
+(to encourage reusability in different situations). The same tag ID may occur
+multiple times in the TL to represent multiple instances of the same kind of
+object. Tag layouts (including the meaning of all fields) are considered stable
+after being added to this specification and may never be changed in a backwards
+incompatible way. If a backwards-incompatible change is desired, a new tag ID
+should be allocated for the new version of the layout instead.
+(Backwards-compatible ways to change existing layouts could be increasing the
+data_length to append new fields behind the structure or using fields in the
+layout that were previously marked as reserved, as long as the TE would still
+be considered valid for older implementations that ignore these new fields. TE
+layouts which have been changed like that must clearly document which fields
+have been added after the first version.)
+
+The {0xff_f000, ..., 0xff_ffff} range is reserved for non-standardized use.
+Anyone is free to use tags from that range for any custom TE layout without
+adding their definitions to this specification first. The use of this range is
+*strongly discouraged* for anything other than local experiments or code that
+will only ever be used in closed-source components owned by the entity
+controlling the entire final firmware image. In particular, a TE just
+containing platform-specific data or internal structures specific to a single
+firmware implementation is no reason not to allocate a standardized tag for it
+in this specification. Since standards often emerge organically, the goal is to
+create unique tag IDs for everything just in case it turns out to be useful in
+more applications than initially anticipated. Basically, whenever you're
+submitting code for a new TE layout to any public open-source project, that's
+probably a good indication that you should allocate a tag ID for it in this
+specification.
 
 .. _tab_tag_id_ranges:
 
@@ -167,27 +413,19 @@ The *tag_id* ranges are described in :numref:`tab_tag_id_ranges`.
    * - tag ID range
      - Description
 
-   * - 0x0 -- 0xf_ffff
-     - Standard tag id range. Any tag id in this range must first be allocated in this specification before being used. The allocation of the tag id requires the entry layout to be defined as well.
+   * - 0x0 -- 0x7f_ffff
+     - Standardized range. Any tag ID in this range must first be allocated in this specification before being used. The allocation of the tag ID requires the entry layout to be defined as well.
 
+   * - 0x80_0000 -- 0xff_efff
+     - Reserved. (Can later be used to extend standardized range if necessary.)
 
-   * - 0x10_0000 -- 0x10_ffff
-     - Non-standard range. A platform firmware integrator can create entries in this range. Different platforms are allowed to have tag ids in this range with distinct data formats. Entries in this range are not standardized.
-
-   * - 0x11_0000 -- 0xffff_ffff
-     - Reserved
+   * - 0xff_f000 -- 0xff_ffff
+     - Non-standardized range. Tag IDs in this range can be used without allocation in this specification. Using this range for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator is strongly discouraged.
 
 .. _sec_std_entries:
 
 Standard transfer entries
 -------------------------
-
-The TEs have a *tag_id* in the {0, ..., 0xf_ffff} set. Both
-the tag_id of a standard entry as well as the entry layout
-must be defined in this specification before being used.
-New entries are expected to have a simple layout. Complex
-data should be represented in a self-describing data
-structure, such as the FDT [DT]_.
 
 The following entry types are currently defined:
 
@@ -197,15 +435,18 @@ The following entry types are currently defined:
 - HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
 - ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
 
-All other standard *tag_id* values are reserved by this specification.
-
 .. _void_entry:
 
 Empty entry layout (XFERLIST_VOID)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The empty or void entry should not contain any information to be consumed by any firmware stage.
-The intent of the void entry type is for information to be removed from the list without subsequent entries having to be relocated.
+The intent of the void entry type is to removed information from the list without needing to
+relocate subsequent entries, or to create padding for entries that require a specific alignment.
+Void entries may be freely overwritten with new TEs, provided the resulting TL remains valid
+(i.e. a void entry can only be overwritten by a TE of equal or smaller size; if the size is more
+than 8 bytes smaller, a new void entry must be created behind the new TE to cover the remaining
+space up to the next TE).
 
 .. _tab_void:
 .. list-table:: Empty type layout
@@ -217,24 +458,21 @@ The intent of the void entry type is for information to be removed from the list
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **0**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the void space in bytes. May be 0. For XFERLIST_VOID,
+     data_size *MUST* be a multiple of 8 (i.e. there must be no space left to
+     inter-TE padding after this TE).
 
    * - void_data
      - data_size
@@ -261,24 +499,19 @@ the flattened devicetree (FDT) [DT]_ representation.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **1**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the FDT in bytes.
 
    * - fdt
      - data_size
@@ -306,24 +539,19 @@ the TL and following the HOB list requirements defined in [PI]_.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **2**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the HOB block in bytes.
 
    * - hob_block
      - data_size
@@ -351,24 +579,19 @@ specified in [PI]_.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **3**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of the HOB list in bytes.
 
    * - hob_list
      - data_size
@@ -382,12 +605,15 @@ ACPI table aggregate entry layout (XFERLIST_ACPI_AGGR)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This entry type holds one or more ACPI tables. The first table must start at
-offset *hdr_size*, from the start of the entry. Any subsequent ACPI tables
-must be located at the next 16-byte alligned address following the preceding
-ACPI table. Note that each ACPI table has a *Length* field in the ACPI table
-header [ACPI]_, which must be used to determine the end of the ACPI table.
-The *data_size* value must be set such that the last ACPI table, in this entry,
-ends at offset *hdr_size + data_size*, from the start of the entry.
+offset `hdr_size` from the start of the entry. Since ACPI tables usually have an
+alignment requirement larger than 8, writers may first need to create an
+XFERLIST_VOID padding entry so that the subsequent `te_base_addr + te.hdr_size`
+will be correctly aligned. Any subsequent ACPI tables must be located at the
+next 16-byte alligned address following the preceding ACPI table. Note that each
+ACPI table has a `Length` field in the ACPI table header [ACPI]_, which must be
+used to determine the end of the ACPI table.  The `data_size` value must be set
+such that the last ACPI table in this entry ends at offset
+`hdr_size + data_size` from the start of the entry.
 
 .. _tab_acpi_aggr:
 .. list-table:: ACPI table aggregate type layout
@@ -399,26 +625,23 @@ ends at offset *hdr_size + data_size*, from the start of the entry.
      - Description
 
    * - tag_id
-     - 0x4
+     - 0x3
      - 0x0
      - The tag_id field must be set to **4**.
 
    * - hdr_size
-     - 0x4
-     - 0x4
-     - The size of this entry header in bytes.
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
 
    * - data_size
      - 0x4
-     - 0x8
-     - The size of the data content in bytes.
-
-   * - reserved
      - 0x4
-     - 0xc
-     - Reserved, must be zero.
+     - The size of all included ACPI tables + padding in bytes.
 
    * - acpi_tables
      - data_size
      - hdr_size
      - One or more ACPI tables.
+
+.. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
