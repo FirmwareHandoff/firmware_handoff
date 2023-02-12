@@ -26,3 +26,16 @@ The following are use to generate the specification:
 
  - html:
     make html
+
+Status
+======
+
+As of February 2023 the spec is in the process of being finalised. Once this is
+complete and everyone is in agreement with the content, we will issue a 0.9
+release. We will then look to implement it in various target projects, including
+U-Boot, coreboot, TF-A and Tiancore. Once this is done we will review the result
+to see if any serious flaws have come to light, meaning that changes are needed.
+If so, these will be undertaken in each project.
+
+By the end of 2023, the spec will be considered stable and will be published
+as version 1. From there on, backwards compatibility will be maintained.
