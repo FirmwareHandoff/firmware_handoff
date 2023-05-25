@@ -445,6 +445,7 @@ The following entry types are currently defined:
 - single HOB block entry: tag_id = 2 (:numref:`hob_block_entry`).
 - HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
 - ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
+- GUID BLOB block entry: tag_id = 5 (:numref:`guid_blob_entry`).
 
 .. _void_entry:
 
@@ -657,3 +658,59 @@ such that the last ACPI table in this entry ends at offset
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
 .. |current_version| replace:: `0x1`
+
+
+.. _guid_blob_entry:
+
+GUID BLOB block entry layout (XFERLIST_GUID_BLOB)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This entry type holds an object identified by its GUID. The values and
+semantics should be consistent (but not limited to) with [UEFI]_ and [ACPI]_.
+
+.. _tab_guid_blob:
+.. list-table:: GUID BLOB block type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **5**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of `GuidBlob` (including BLOB content) in bytes.
+
+   * - guid_blob
+     - data_size
+     - hdr_size
+     - The guid_blob field contains a `GuidBlob`.
+
+.. code-block:: c
+
+        typedef struct {
+          uint32_t data1;
+          uint16_t data2;
+          uint16_t data3;
+          uint8_t data4[8];
+        } guid;
+
+        typedef struct  {
+          // GUID name
+          guid name;
+          // BLOB content
+          uint8_t blob[n];
+        } GuidBlob;
+
+The size of the BLOB content (`n`) is `data_size - 16`.

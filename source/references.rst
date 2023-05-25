@@ -8,3 +8,5 @@
 .. [ACPI] `Advanced Configuration and Power Interface (ACPI) Specification.`
 
 .. [ArmARM] `Arm® Architecture Reference Manual for the A-profile architecture`, Arm LTD.
+
+.. [UEFI] `Unified Extensible Firmware Interface (UEFI) Specification <https://uefi.org/specifications>`
