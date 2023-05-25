@@ -446,6 +446,7 @@ The following entry types are currently defined:
 - HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
 - ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
 - GUID BLOB block entry: tag_id = 5 (:numref:`guid_blob_entry`).
+- GUID POINTER entry: tag_id = 6 (:numref:`guid_pointer_entry`).
 
 .. _void_entry:
 
@@ -701,3 +702,56 @@ semantics should be consistent (but not limited to) with [UEFI]_ and [ACPI]_.
      - data_size - 0x10
      - hdr_size + 0x10
      - Object content
+
+
+.. _guid_pointer_entry:
+
+GUID POINTER entry layout (XFERLIST_GUID_POINTER)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This entry type points to an object identified by its GUID. The values and
+semantics should be consistent (but not limited to) with [UEFI]_ and [ACPI]_.
+
+.. _tab_guid_pointer:
+.. list-table:: GUID POINTER type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **6**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of `GuidPointer` in bytes.
+
+   * - guid_blob
+     - 0x20
+     - hdr_size
+     - The guid_blob field contains a `GuidPointer`.
+
+.. code-block:: c
+
+        typedef struct {
+          uint32_t data1;
+          uint16_t data2;
+          uint16_t data3;
+          uint8_t data4[8];
+        } guid;
+
+        typedef struct {
+          guid name;          // GUID name
+          uint64_t address;   // content address
+          uint64_t size;      // content size
+        } GuidPointer;
