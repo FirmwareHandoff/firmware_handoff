@@ -734,24 +734,19 @@ semantics should be consistent (but not limited to) with [UEFI]_ and [ACPI]_.
    * - data_size
      - 0x4
      - 0x4
-     - The size of `GuidPointer` in bytes.
+     - The data_size field must be set to **32**
 
-   * - guid_blob
-     - 0x20
+   * - guid
+     - 0x10
      - hdr_size
-     - The guid_blob field contains a `GuidPointer`.
+     - GUID identifying the content.
 
-.. code-block:: c
+   * - cont_addr
+     - 0x8
+     - hdr_size + 0x10
+     - Object content address in memory
 
-        typedef struct {
-          uint32_t data1;
-          uint16_t data2;
-          uint16_t data3;
-          uint8_t data4[8];
-        } guid;
-
-        typedef struct {
-          guid name;          // GUID name
-          uint64_t address;   // content address
-          uint64_t size;      // content size
-        } GuidPointer;
+   * - cont_size
+     - 0x8
+     - hdr_size + 0x18
+     - Object content size
