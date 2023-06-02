@@ -690,27 +690,14 @@ semantics should be consistent (but not limited to) with [UEFI]_ and [ACPI]_.
    * - data_size
      - 0x4
      - 0x4
-     - The size of `GuidBlob` (including BLOB content) in bytes.
+     - Size of GUID and object content in bytes.
 
-   * - guid_blob
-     - data_size
+   * - guid
+     - 0x10
      - hdr_size
-     - The guid_blob field contains a `GuidBlob`.
+     - GUID identifying the content.
 
-.. code-block:: c
-
-        typedef struct {
-          uint32_t data1;
-          uint16_t data2;
-          uint16_t data3;
-          uint8_t data4[8];
-        } guid;
-
-        typedef struct  {
-          // GUID name
-          guid name;
-          // BLOB content
-          uint8_t blob[n];
-        } GuidBlob;
-
-The size of the BLOB content (`n`) is `data_size - 16`.
+   * - content
+     - data_size - 0x10
+     - hdr_size + 0x10
+     - Object content
