@@ -204,7 +204,7 @@ Inputs:
       for `te.hdr_size`, even for known tags!) Otherwise, ignore the tag and
       proceed with the next step.
 
-   #. Add `te.hdr_size + te.data_size` to `te_base_addr`.
+   #. Add `align8(te.hdr_size + te.data_size)` to `te_base_addr`.
 
 Adding a new TE
 ^^^^^^^^^^^^^^^
