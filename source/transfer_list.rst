@@ -346,7 +346,9 @@ Inputs:
 
 #. Calculate `alignment_mask` as `(1 << tl.alignment) - 1`.
 
-#. Calculate `new_tl_base` as `(target_base + alignment_mask) & ~alignment_mask`.
+#. Calculate the current `alignment_offset` as `tl_base_addr & alignment_mask`.
+
+#. Calculate `new_tl_base` as `(target_base & ~alignment_mask) + alignment_offset`.
 
 #. If `new_tl_base` is below `target_base`, add `alignment_mask + 1` to `new_tl_base`.
 
@@ -358,7 +360,7 @@ Inputs:
 #. Subtract the sum of the 4 bytes from `new_tl_base + 0xc` to `new_tl_base + 0x10`
    from `tl.checksum` (`new_tl_base + 0x4`).
 
-#. Set `tl.max_size` (`new_tl_base + 0xc`) to `target_size - new_tl_base`.
+#. Set `tl.max_size` (`new_tl_base + 0xc`) to `target_size - (new_tl_base - target_base)`.
 
 #. Add the sum of the 4 bytes from `new_tl_base + 0xc` to `new_tl_base + 0x10`
    to `tl.checksum` (`new_tl_base + 0x4`).
