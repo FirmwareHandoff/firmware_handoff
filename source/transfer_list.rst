@@ -285,7 +285,7 @@ Inputs:
 
 #. Calculate `alignment_mask` as `(1 << new_alignment) - 1`.
 
-#. If `(tl_base_addr + tl.size) & alignment_mask` is not `0x0`, follow the
+#. If `(tl_base_addr + tl.size + 0x8) & alignment_mask` is not `0x0`, follow the
    steps in `Adding a new TE`_ with the following inputs (bypass the option to
    overwrite an existing XFERLIST_VOID TE):
 
@@ -293,7 +293,7 @@ Inputs:
 
    #. `new_tag_id` is `0x0` (XFERLIST_VOID)
 
-   #. `new_data_size` is `(1 << new_alignment) - ((tl_base_addr + tl.size) & alignment_mask) - 0x8`.
+   #. `new_data_size` is `(1 << new_alignment) - ((tl_base_addr + tl.size + 0x8) & alignment_mask) - 0x8`.
 
    #. No data (i.e. just don't touch the bytes that form the data portion for this TE).
 
