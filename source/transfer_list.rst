@@ -71,7 +71,7 @@ changes will be backwards-compatible to older readers.
    * - checksum
      - 0x1
      - 0x4
-     - The checksum is used to ensure the data contained within the list is intact. The checksum is set to a value such that the sum over every byte in the {`tl_base_pa`, …, `tl_base_pa + size - 1`} address range, modulo 256, is equal to 0. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as 0. Note that the checksum includes the TL header, all TEs and the inter-TE padding, but not the range reserved for future TE additions up to max_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.)
+     - If enabled by the flags, the checksum is used to provide basic protection against something overwriting the TL in memory. The checksum is set to a value such that the sum over every byte in the {`tl_base_pa`, …, `tl_base_pa + size - 1`} address range, modulo 256, is equal to 0. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as 0. Note that the checksum includes the TL header, all TEs and the inter-TE padding, but not the range reserved for future TE additions up to max_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.). If checksums are not used, this must be 0.
 
    * - version
      - 0x1
@@ -123,7 +123,12 @@ field.
      - Name
      - Description
 
-   * - 31:0
+   * - 0
+     - has_checksum
+     - A value of `1` (true) indicates that this TL uses checksums. The checksum
+       field must be valid at the point of handoff.
+
+   * - 31:1
      - unused
      - Reserved for future use. Must be 0 or ignored.
 
@@ -210,8 +215,9 @@ Inputs:
    equal to the size of the total area reserved for the TL (if known). If not,
    abort (TL is corrupted).
 
-#. *(optional)* Check that the sum of `tl.size` bytes starting at `tl_base_addr`
-   minus `tl.checksum` is equal to `tl.checksum`. If not, abort (TL is corrupted).
+#. *(optional)* If `has_checksum`, check that the sum of `tl.size` bytes
+   starting at `tl_base_addr` minus `tl.checksum` is equal to `tl.checksum`. If
+   not, abort (TL is corrupted).
 
 Reading a TL
 ^^^^^^^^^^^^
@@ -253,8 +259,8 @@ Inputs:
 
    #. Use the `te_base_addr` of this tag for the rest of the operation.
 
-   #. Subtract the sum of `align8(new_data_size + 0x8)` bytes starting at
-      `te_base_addr` from `tl.checksum`.
+   #. If `has_checksum`, Subtract the sum of `align8(new_data_size + 0x8)` bytes
+      starting at `te_base_addr` from `tl.checksum`.
 
    #. Skip the next step (step 2) with all its substeps.
 
@@ -263,13 +269,13 @@ Inputs:
    #. If `tl.max_size - tl.size` is smaller than `align8(new_data_size + 0x8)`,
       abort (not enough room to add TE).
 
-   #. Subtract the sum of the 4 bytes from `tl_base_addr + 0x8` to `tl_base_addr + 0xc`
-      from `tl.checksum`.
+   #. If `has_checksum`, subtract the sum of the 4 bytes from
+      `tl_base_addr + 0x8` to `tl_base_addr + 0xc` from `tl.checksum`.
 
    #. Add `align8(new_data_size + 0x8)` to `tl.size`.
 
-   #. Add the sum of the 4 bytes from `tl_base_addr + 0x8` to `tl_base_addr + 0xc`
-      to `tl.checksum`.
+   #. If `has_checksum`, add the sum of the 4 bytes from `tl_base_addr + 0x8` to
+      `tl_base_addr + 0xc` to `tl.checksum`.
 
 #. Set `te.tag_id` (`te_base_addr + 0x0`) to `new_tag_id`.
 
@@ -279,8 +285,8 @@ Inputs:
 
 #. Copy or generate the TE data into `te_base_addr + 0x8`.
 
-#. Add the sum of `align8(new_data_size + 0x8)` bytes starting at `te_base_addr`
-   to `tl.checksum`.
+#. If `has_checksum`, add the sum of `align8(new_data_size + 0x8)` bytes
+   starting at `te_base_addr` to `tl.checksum`.
 
 #. If an existing XFERLIST_VOID TE was chosen to be overwritten in step 1, and
    `old_void_data_size - new_data_size` is greater or equal to `0x8`:
@@ -288,8 +294,8 @@ Inputs:
    #. Use `te_base_addr + align8(new_data_size + 0x8)` as the new `te_base_addr`
       for a new XFERLIST_VOID tag.
 
-   #. Subtract the sum of the 8 bytes from `te_base_addr` to `te_base_addr + 0x8`
-      from `tl.checksum`.
+   #. If `has_checksum`, subtract the sum of the 8 bytes from `te_base_addr` to
+      `te_base_addr + 0x8` from `tl.checksum`.
 
    #. Set `te.tag_id` (`te_base_addr + 0x0`) to `0x0` (XFERLIST_VOID).
 
@@ -298,8 +304,8 @@ Inputs:
    #. Set `te.data_size` (`te_base_addr + 0x4`) to
       `old_void_data_size - align8(new_data_size) - 0x8`.
 
-   #. Add the sum of the 8 bytes from `te_base_addr` to `te_base_addr + 0x8`
-      to `tl.checksum`.
+   #. If `has_checksum`, add the sum of the 8 bytes from `te_base_addr` to
+      `te_base_addr + 0x8` to `tl.checksum`.
 
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -331,11 +337,11 @@ Inputs:
 
 #. If `new_alignment` is larger than `tl.alignment`:
 
-   #. Subtract `tl.alignment` from `tl.checksum`.
+   #. If `has_checksum`, subtract `tl.alignment` from `tl.checksum`.
 
    #. Set `tl.alignment` to `new_alignment`.
 
-   #. Add `tl.alignment` to `tl.checksum`.
+   #. If `has_checksum`, add `tl.alignment` to `tl.checksum`.
 
 Creating a TL
 ^^^^^^^^^^^^^
@@ -361,8 +367,12 @@ Inputs:
 
 #. Set `tl.max_size` (`tl_base_addr + 0xc`) to `available_size`.
 
-#. Calculate the checksum as the sum of all bytes from `tl_base_addr` to
-   `tl_base_addr + tl.hdr_size`, and write the result to `tl.checksum`.
+#. If checksums are to be used, set `tl.flags` (`tl_base_addr + 0x10`) to `1`,
+   else `0`. This is the value of `has_checksum`.
+
+#. If `has_checksum`, calculate the checksum as the sum of all bytes from
+   `tl_base_addr` to `tl_base_addr + tl.hdr_size`, and write the result to
+   `tl.checksum`.
 
 Relocating a TL
 ^^^^^^^^^^^^^^^
@@ -386,13 +396,13 @@ Inputs:
 
 #. Copy `tl.size` bytes from `tl_base_addr` to `new_tl_base`.
 
-#. Subtract the sum of the 4 bytes from `new_tl_base + 0xc` to `new_tl_base + 0x10`
-   from `tl.checksum` (`new_tl_base + 0x4`).
+#. If `has_checksum`, subtract the sum of the 4 bytes from `new_tl_base + 0xc`
+   to `new_tl_base + 0x10` from `tl.checksum` (`new_tl_base + 0x4`).
 
 #. Set `tl.max_size` (`new_tl_base + 0xc`) to `target_size - (new_tl_base - target_base)`.
 
-#. Add the sum of the 4 bytes from `new_tl_base + 0xc` to `new_tl_base + 0x10`
-   to `tl.checksum` (`new_tl_base + 0x4`).
+#. If `has_checksum`, add the sum of the 4 bytes from `new_tl_base + 0xc` to
+   `new_tl_base + 0x10` to `tl.checksum` (`new_tl_base + 0x4`).
 
 
 Entry type allocation
