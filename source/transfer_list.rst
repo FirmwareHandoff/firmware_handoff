@@ -81,7 +81,7 @@ changes will be backwards-compatible to older readers.
    * - hdr_size
      - 0x1
      - 0x6
-     - The size of this TL header in bytes. This field is set to 16 for the TL header layout described in this version of the table.
+     - The size of this TL header in bytes. This field is set to 0x10 for the TL header layout described in this version of the table.
 
    * - alignment
      - 0x1
