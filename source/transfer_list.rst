@@ -484,8 +484,8 @@ space up to the next TE).
      - 0x4
      - 0x4
      - The size of the void space in bytes. May be 0. For XFERLIST_VOID,
-     data_size *MUST* be a multiple of 8 (i.e. there must be no space left to
-     inter-TE padding after this TE).
+       data_size *MUST* be a multiple of 8 (i.e. there must be no space left to
+       inter-TE padding after this TE).
 
    * - void_data
      - data_size
