@@ -56,7 +56,7 @@ changes will be backwards-compatible to older readers.
 
 .. _tab_tl_header:
 .. list-table:: TL header
-   :widths: 2 2 2 8
+   :widths: 2 2 2 9
 
    * - Field
      - Size (bytes)
@@ -81,7 +81,7 @@ changes will be backwards-compatible to older readers.
    * - hdr_size
      - 0x1
      - 0x6
-     - The size of this TL header in bytes. This field is set to 0x10 for the TL header layout described in this version of the table.
+     - The size of this TL header in bytes. This field is set to 0x18 for the TL header layout described in this version of the table.
 
    * - alignment
      - 0x1
@@ -97,6 +97,35 @@ changes will be backwards-compatible to older readers.
      - 0x4
      - 0xc
      - The maximum number of bytes that the TL can occupy. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocate the TL and update this field accordingly, provided that the TL requirements are respected. This field must be a multiple of 8.
+
+   * - flags
+     - 0x4
+     - 0x10
+     - Flags word. See below for contents.
+
+   * - reserved
+     - 0x4
+     - 0x14
+     - Reserved word. Must be set to 0 or ignored.
+
+
+TL Flags
+^^^^^^^^
+
+The TL flags word is intended to signal properties relating to the TL as a
+whole. Future flag values may be added according to the rules of the `version`
+field.
+
+.. list-table:: Flags
+   :widths: 2 2 8
+
+   * - Bit
+     - Name
+     - Description
+
+   * - 31:0
+     - unused
+     - Reserved for future use. Must be 0 or ignored.
 
 
 .. _sec_tl_entry_hdr:
@@ -316,7 +345,7 @@ Inputs:
 - `tl_base_addr`: Base address where to place the new TL.
 - `available_size`: Available size in bytes to reserve for the TL after `tl_base_addr`.
 
-#. Check that `available_size` is larger than `0x10`, otherwise abort.
+#. Check that `available_size` is larger than `0x18` (the assumed `tl.hdr_size`), otherwise abort.
 
 #. Set `tl.signature` (`tl_base_addr + 0x0`) to `0x6e_d0ff`.
 
@@ -324,16 +353,16 @@ Inputs:
 
 #. Set `tl.version` (`tl_base_addr + 0x5`) to |current_version|.
 
-#. Set `tl.hdr_size` (`tl_base_addr + 0x6`) to `0x10`.
+#. Set `tl.hdr_size` (`tl_base_addr + 0x6`) to `0x18`.
 
 #. Set `tl.alignment` (`tl_base_addr + 0x7`) to `0x3`.
 
-#. Set `tl.size` (`tl_base_addr + 0x8`) to `0x10`.
+#. Set `tl.size` (`tl_base_addr + 0x8`) to `0x18` (the assumed `tl.hdr_size`).
 
 #. Set `tl.max_size` (`tl_base_addr + 0xc`) to `available_size`.
 
 #. Calculate the checksum as the sum of all bytes from `tl_base_addr` to
-   `tl_base_addr + 0x10`, and write the result to `tl.checksum`.
+   `tl_base_addr + tl.hdr_size`, and write the result to `tl.checksum`.
 
 Relocating a TL
 ^^^^^^^^^^^^^^^
