@@ -48,7 +48,8 @@ Transfer list header
 
 A TL must begin with a TL header. The layout of the TL header is shown in
 :numref:`tab_tl_header`.  The presence of a TL header can be verified by
-inspecting the signature field which must contain the 0x6e_d0ff value.  The
+inspecting the signature field which must contain the 0x40_b10b value.  The
+
 version field determines the contents of the handoff start header. The version
 will only be changed by an update to this specification when new TL header or
 TE header fields are defined (i.e. not when allocating new tag IDs), and all
@@ -66,7 +67,7 @@ changes will be backwards-compatible to older readers.
    * - signature
      - 0x4
      - 0x0
-     - The value of signature must be `0x6e_d0ff`.
+     - The value of signature must be `0x40_b10b`.
 
    * - checksum
      - 0x1
@@ -198,7 +199,7 @@ Inputs:
 
 - `tl_base_addr`: Base address of the existing TL.
 
-#. Compare `tl.signature` (`tl_base_addr + 0x0`) to `0x6e_d0ff`. On a mismatch,
+#. Compare `tl.signature` (`tl_base_addr + 0x0`) to `0x40_b10b`. On a mismatch,
    abort (this is not a valid TL).
 
 #. Compare `tl.version` (`tl_base_addr + 0x5`) to the expected version
@@ -353,7 +354,7 @@ Inputs:
 
 #. Check that `available_size` is larger than `0x18` (the assumed `tl.hdr_size`), otherwise abort.
 
-#. Set `tl.signature` (`tl_base_addr + 0x0`) to `0x6e_d0ff`.
+#. Set `tl.signature` (`tl_base_addr + 0x0`) to `0x40_b10b`.
 
 #. Set `tl.checksum` (`tl_base_addr + 0x4`) to `0x0` (for now).
 
