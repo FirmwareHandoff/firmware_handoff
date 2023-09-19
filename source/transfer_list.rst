@@ -180,6 +180,29 @@ The TE header is defined in :numref:`tab_te_header`.
      - The exact size of the data content in bytes, not including inter-TE padding. May be 0.
 
 
+TL Contents
+-----------
+
+The TL must not hold pointers or addresses within its entries, which refer to
+anything in the TL. These can make it difficult to relocate the TL. TL
+relocation typically happens in later phases of the boot when there is more
+memory available, which is needed for adding larger entries.
+
+The TL may hold pointers or addresses which refer to regions outside the TL, if
+this is necessary. For example, the MMIO address of a device may be included in
+a TE. But in general, pointers and addresses should be avoided. Instead, the
+data structure itself should generally be contained within the TL. This approach
+provides the greatest flexibility for later boot stages to handle memory as they
+wish, since relocating the TL is fairly simple and self-contained, without
+needing to consider relocating other data structures strewn around the memory.
+
+Where pointers or addresses are needed due to some project-specific restriction,
+a separate TE should generally be created for that purpose, rather than mixing
+pointers with other data. Of course there may be exceptions where two pointers
+belong together, or there is a pointer and a size which belong together. In any
+case, the PR should clearly document the need for these pointers.
+
+
 .. _sec_operations:
 
 Standard operations
