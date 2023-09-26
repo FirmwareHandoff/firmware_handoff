@@ -447,6 +447,7 @@ The following entry types are currently defined:
 - single HOB block entry: tag_id = 2 (:numref:`hob_block_entry`).
 - HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
 - ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
+- Entries related to Trusted Firmware (:numref:`tf_entries`)
 
 .. _void_entry:
 
@@ -656,6 +657,87 @@ such that the last ACPI table in this entry ends at offset
      - data_size
      - hdr_size
      - One or more ACPI tables.
+
+.. _tf_entries:
+
+Entries related to Trusted Firmware
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following entry types are defined for Trusted Firmware projects,
+including TF-A and OP-TEE:
+
+**OP-TEE pageable part address entry layout (XFERLIST_OPTEE_PAGEABLE_PART_ADDR)**
+
+This entry type holds the address of OP-TEE pageable part which is described in
+[OPTEECore]_.
+This address (of type 'uint64_t') is used when OPTEED (OP-TEE Dispatcher)
+is the Secure Payload Dispatcher, indicating where to load the pageable image of
+the OP-TEE OS.
+
+.. _tab_optee_pageable_part_address:
+.. list-table:: OP-TEE pageable part address type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x100**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size (in bytes) of the address of OP-TEE pageable part which must be set to **8**.
+
+   * - pp_addr
+     - data_size
+     - hdr_size
+     - Holds the address of OP-TEE pageable part
+
+**DT formatted SPMC manifest entry layout (XFERLIST_DT_SPMC_MANIFEST)**
+
+This entry type holds the SPMC (Secure Partition Manager Core) manifest image
+which is in DT format [DT]_ and described in [TFAFFAMB]_.
+This manifest contains the SPMC attribute node consumed by the SPMD
+(Secure Partition Manager Dispatcher) at boot time.
+
+.. _tab_dt_spmc_manifest:
+.. list-table:: DT formatted SPMC manifest type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x101**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of SPMC manifest in bytes.
+
+   * - spmc_man
+     - data_size
+     - hdr_size
+     - Holds a SPMC manifest image in DT format.
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
 .. |current_version| replace:: `0x1`
