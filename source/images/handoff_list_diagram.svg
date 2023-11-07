@@ -304,7 +304,7 @@ span.MathJax_SVG { position: static !important; }</xhtml:style>
       <text
          x="461.22458"
          y="497.43219"
-         id="text36">tl_base_pa + TL.length</text>
+         id="text36">tl_base_pa + TL.used_size</text>
     </g>
     <rect
        x="125"
@@ -582,7 +582,7 @@ span.MathJax_SVG { position: static !important; }</xhtml:style>
       <text
          x="470.53601"
          y="576.81146"
-         id="text132">tl_base_pa + TL.max_length</text>
+         id="text132">tl_base_pa + TL.total_size</text>
     </g>
     <path
        d="m 380,575 h 10"
