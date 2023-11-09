@@ -183,6 +183,31 @@ The TE header is defined in :numref:`tab_te_header`.
 TL Contents
 -----------
 
+Tags are expected to have a simple layout (representable by a C structure) and
+each tag should only represent data for a single logical concept. Data for
+multiple distinct concepts should be split across different tags, even if
+they're always expected to appear together on the first platform adding the tag
+(to encourage reusability in different situations). Alternatively, complex data
+may be represented in a different kind of well-established handoff data
+structure (e.g. FDT [DT]_, HOB [PI]_) that is inserted into the TL as a single
+TE. The same tag ID may occur multiple times in the TL to represent multiple
+instances of the same kind of object. Tag layouts (including the meaning of all
+fields) are considered stable after being added to this specification and may
+never be changed in a backwards-incompatible way. If a backwards-incompatible
+change is desired, a new tag ID should be allocated for the new version of the
+layout instead.
+
+Tag layouts may be changed in a backwards-compatible manner by allowing new
+valid values in existing fields (including reserved fields), as long as the
+original layout definition clearly defined how unknown values in those fields
+should be handled, and the rest of the TE would still be considered valid and
+correct for older readers that consider the new values unknown. TE layouts may
+also be expanded by adding new fields at the end, with the same restrictions.
+TEs should not contain explicit version numbers and instead just use the
+`data_size` value to infer how many fields exist. TE layouts which have been
+changed like this must clearly document which fields or valid values were added
+at a later time, and in what order.
+
 The TL must not hold pointers or addresses within its entries, which refer to
 anything in the TL. These can make it difficult to relocate the TL. TL
 relocation typically happens in later phases of the boot when there is more
@@ -201,6 +226,51 @@ a separate TE should generally be created for that purpose, rather than mixing
 pointers with other data. Of course there may be exceptions where two pointers
 belong together, or there is a pointer and a size which belong together. In any
 case, the PR should clearly document the need for these pointers.
+
+
+Entry-type allocation
+---------------------
+
+Tag IDs must be allocated in this specification before use. A new tag ID can be
+allocated by submitting a pull request to this repository that adds a
+description of the respective TE data layout to this specification. Tag IDs do
+not have to be allocated in order. Submitters are encouraged to try to group
+tag IDs together in logical clusters at 16 or 256-aligned boundaries (e.g. all
+tags related to a particular chipset or to a particular firmware project could
+use adjacent tag numbers), but there are no predefined ranges and no
+reservations of tag ranges for specific use.
+
+The {0xff_f000, ..., 0xff_ffff} range is reserved for non-standardized use.
+Anyone is free to use tags from that range for any custom TE layout without
+adding their definitions to this specification first. The use of this range is
+*strongly discouraged* for anything other than local experiments or code that
+will only ever be used in closed-source components owned by the entity
+controlling the entire final firmware image. In particular, a TE just
+containing platform-specific data or internal structures specific to a single
+firmware implementation is no reason not to allocate a standardized tag for it
+in this specification. Since standards often emerge organically, the goal is to
+create unique tag IDs for everything just in case it turns out to be useful in
+more applications than initially anticipated. Basically, whenever you're
+submitting code for a new TE layout to any public open-source project, that's
+probably a good indication that you should allocate a tag ID for it in this
+specification.
+
+.. _tab_tag_id_ranges:
+
+.. list-table:: Tag ID ranges
+   :widths: 3 8
+
+   * - tag ID range
+     - Description
+
+   * - 0x0 -- 0x7f_ffff
+     - Standardized range. Any tag ID in this range must first be allocated in this specification before being used. The allocation of the tag ID requires the entry layout to be defined as well.
+
+   * - 0x80_0000 -- 0xff_efff
+     - Reserved. (Can later be used to extend standardized range if necessary.)
+
+   * - 0xff_f000 -- 0xff_ffff
+     - Non-standardized range. Tag IDs in this range can be used without allocation in this specification. Using this range for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator is strongly discouraged. Tags in this range are not tracked in this repository and PRs to add tag defintions for this range will not be accepted.
 
 
 .. _sec_operations:
@@ -426,75 +496,6 @@ Inputs:
 #. If `has_checksum`, xor the 4 bytes from `new_tl_base + 0xc` to
    `new_tl_base + 0x10` with `tl.checksum` (`new_tl_base + 0x4`).
 
-
-Entry type allocation
----------------------
-
-Tag IDs must be allocated in this specification before use. A new tag ID can be
-allocated by submitting a pull request to this repository that adds a
-description of the respective TE data layout to this specification. Tag IDs do
-not have to be allocated in order. Submitters are encouraged to try to group
-tag IDs together in logical clusters at 16 or 256-aligned boundaries (e.g. all
-tags related to a particular chipset or to a particular firmware project could
-use adjacent tag numbers), but there are no predefined ranges and no
-reservations of tag ranges for specific use.
-
-Tags are expected to have a simple layout (representable by a C structure) and
-each tag should only represent data for a single logical concept. Data for
-multiple distinct concepts should be split across different tags, even if
-they're always expected to appear together on the first platform adding the tag
-(to encourage reusability in different situations). Alternatively, complex data
-may be represented in a different kind of well-established handoff data
-structure (e.g. FDT [DT]_, HOB [PI]_) that is inserted into the TL as a single
-TE. The same tag ID may occur multiple times in the TL to represent multiple
-instances of the same kind of object. Tag layouts (including the meaning of all
-fields) are considered stable after being added to this specification and may
-never be changed in a backwards-incompatible way. If a backwards-incompatible
-change is desired, a new tag ID should be allocated for the new version of the
-layout instead.
-
-Tag layouts may be changed in a backwards-compatible manner by allowing new
-valid values in existing fields (including reserved fields), as long as the
-original layout definition clearly defined how unknown values in those fields
-should be handled, and the rest of the TE would still be considered valid and
-correct for older readers that consider the new values unknown. TE layouts may
-also be expanded by adding new fields at the end, with the same restrictions.
-TEs should not contain explicit version numbers and instead just use the
-`data_size` value to infer how many fields exist. TE layouts which have been
-changed like this must clearly document which fields or valid values were added
-at a later time, and in what order.
-
-The {0xff_f000, ..., 0xff_ffff} range is reserved for non-standardized use.
-Anyone is free to use tags from that range for any custom TE layout without
-adding their definitions to this specification first. The use of this range is
-*strongly discouraged* for anything other than local experiments or code that
-will only ever be used in closed-source components owned by the entity
-controlling the entire final firmware image. In particular, a TE just
-containing platform-specific data or internal structures specific to a single
-firmware implementation is no reason not to allocate a standardized tag for it
-in this specification. Since standards often emerge organically, the goal is to
-create unique tag IDs for everything just in case it turns out to be useful in
-more applications than initially anticipated. Basically, whenever you're
-submitting code for a new TE layout to any public open-source project, that's
-probably a good indication that you should allocate a tag ID for it in this
-specification.
-
-.. _tab_tag_id_ranges:
-
-.. list-table:: Tag ID ranges
-   :widths: 3 8
-
-   * - tag ID range
-     - Description
-
-   * - 0x0 -- 0x7f_ffff
-     - Standardized range. Any tag ID in this range must first be allocated in this specification before being used. The allocation of the tag ID requires the entry layout to be defined as well.
-
-   * - 0x80_0000 -- 0xff_efff
-     - Reserved. (Can later be used to extend standardized range if necessary.)
-
-   * - 0xff_f000 -- 0xff_ffff
-     - Non-standardized range. Tag IDs in this range can be used without allocation in this specification. Using this range for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator is strongly discouraged. Tags in this range are not tracked in this repository and PRs to add tag defintions for this range will not be accepted.
 
 .. _sec_std_entries:
 
