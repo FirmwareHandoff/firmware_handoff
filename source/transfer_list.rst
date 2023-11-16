@@ -49,7 +49,6 @@ Transfer list header
 A TL must begin with a TL header. The layout of the TL header is shown in
 :numref:`tab_tl_header`.  The presence of a TL header can be verified by
 inspecting the signature field which must contain the 4a0f_b10b value.  The
-
 version field determines the contents of the handoff start header. The version
 will only be changed by an update to this specification when new TL header or
 TE header fields are defined (i.e. not when allocating new tag IDs), and all
