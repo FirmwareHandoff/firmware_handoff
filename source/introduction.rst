@@ -45,7 +45,7 @@ stages:
 
 * Secure Platform Firmware
 
-  * Firmware stage that executed in a privileged level, it is responsible for loading additional firmware images and optionally performing platform configurations. The stage can be subdivided into other sub-stages. The stage terminates with the transition to the OS Bootloader.
+  * Firmware stage that is executed in a privileged level. It is responsible for loading additional firmware images and optionally performing platform configurations. The stage can be subdivided into other sub-stages. The stage terminates with the transition to the OS Bootloader.
 
 * OS Bootloader
 
