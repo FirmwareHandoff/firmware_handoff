@@ -77,12 +77,12 @@ changes will be backwards-compatible to older readers.
    * - version
      - 0x1
      - 0x5
-     - The version of the TL header. This field is set to |current_version| for the TL header layout described in this version of the table. Code that encounters a TL with a version higher than it knows to support may still read the TL and all its TEs, and assume that it is backwards-compatible to previous versions (ignoring any extra bytes in a potentially larger TL or TE header). However, code may not append new entries to a TL unless it knows how to append entries for the specified version.
+     - The version of the TL header. This field is set to |current_version| for the TL header layout described in this document. Code that encounters a TL with a version higher than it knows to support may still read the TL and all its TEs, and assume that it is backwards-compatible to previous versions (ignoring any extra bytes in a potentially larger TL or TE header). However, code may not append new entries to a TL unless it knows how to append entries for the specified version.
 
    * - hdr_size
      - 0x1
      - 0x6
-     - The size of this TL header in bytes. This field is set to 0x18 for the TL header layout described in this version of the table.
+     - The size of this TL header in bytes. This field is set to 0x18 for the TL header layout described in this document.
 
    * - alignment
      - 0x1
@@ -173,7 +173,7 @@ The TE header is defined in :numref:`tab_te_header`.
    * - hdr_size
      - 0x1
      - 0x3
-     - The size of this entry header in bytes. This field is set to 8 for the TE header layout described in this version of the table.
+     - The size of this entry header in bytes. This field is set to 8 for the TE header layout described in this document.
 
    * - data_size
      - 0x4
