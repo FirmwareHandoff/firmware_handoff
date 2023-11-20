@@ -12,3 +12,5 @@
 .. [OPTEECore] `OP-TEE Core <https://optee.readthedocs.io/en/latest/architecture/core.html>`
 
 .. [TFAFFAMB] `TF-A Secure Partition Manager: FF-A manifest binding to device tree <https://trustedfirmware-a.readthedocs.io/en/latest/components/ffa-manifest-binding.html>`
+
+.. [TCG_EFI] `https://trustedcomputinggroup.org/resource/tcg-efi-protocol-specification`.

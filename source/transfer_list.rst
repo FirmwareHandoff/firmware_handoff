@@ -486,7 +486,9 @@ The following entry types are currently defined:
 - single HOB block entry: tag_id = 2 (:numref:`hob_block_entry`).
 - HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
 - ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
-- Entries related to Trusted Firmware (:numref:`tf_entries`)
+- TPM event log entry: tag_id = 5 (:numref:`tpm_evlog_entry`).
+- TPM CRB base entry: tag_id = 6 (:numref:`tpm_crb_base_entry`).
+- Entries related to Trusted Firmware (:numref:`tf_entries`).
 
 .. _void_entry:
 
@@ -696,6 +698,105 @@ such that the last ACPI table in this entry ends at offset
      - data_size
      - hdr_size
      - One or more ACPI tables.
+
+
+.. _tpm_evlog_entry:
+
+TPM event log table entry layout (XFERLIST_EVLOG)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This entry type holds TPM-related information for a platform. The TPM event log
+info is a region containing a TPM event log as defined by TCG EFI Protocol
+Specification [TCG_EFI]_.
+
+.. _tab_tpm_evlog:
+.. list-table:: TPM event log type layout
+   :widths: 2 2 4 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **5**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the event log in bytes + sizeof(flags) i.e. 0x4.
+
+   * - flags
+     - 0x4
+     - hdr_size
+     - flags are intended to signal properties of this TE. Bit 0 is
+       need_to_replay flag. Some firmware components may compute measurements
+       to be extended into a TPM and add them to the TPM event log, but those
+       components are unable  to access the TPM themselves. In this case, the
+       component should set the "need_to_replay" flag so that the next
+       component in the boot chain is aware that the PCRs have not been
+       extended. A component with access to the TPM would replay the event log
+       by reading each measurement recorded and extending it into the TPM. Once
+       the measurements are extended into the TPM, then the "need_to_replay"
+       flag must be cleared if the transfer list is passed to additional
+       firmware components. Default value is "0". Other bits should be set to
+       zero.
+   
+   * - event_log
+     - data_size - 0x4
+     - hdr_size + 0x4
+     - Holds a complete event log.
+
+
+.. _tpm_crb_base_entry:
+
+TPM CRB base address table entry layout (XFERLIST_TPM_CRB_BASE)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The CRB info defines the address of a region of memory that has been carved out
+and reserved for use as a TPM Command Response Buffer interface.
+
+.. _tab_tpm_crb_base:
+.. list-table:: TPM CRB base type layout
+   :widths: 4 2 4 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **6**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - This value should be set to **0xc** i.e. sizeof(crb_base_address) + sizeof(crb_size).
+
+   * - crb_base_address
+     - 0x8
+     - hdr_size
+     - The physical base address of a region of memory reserved for use as a
+       TPM's Command Response Buffer region.
+
+   * - crb_size 
+     - 0x4
+     - hdr_size + 0x8
+     - Size of CRB.
+
+
 
 .. _tf_entries:
 
