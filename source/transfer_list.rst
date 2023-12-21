@@ -902,6 +902,54 @@ This manifest contains the SPMC attribute node consumed by the SPMD
      - hdr_size
      - Holds a SPMC manifest image in DT format.
 
+**AArch64 executable entry point information (XFERLIST_EXEC_EP_INFO64)**
+
+This entry type holds the AArch64 variant of `entry_point_info`.
+`entry_point_info` is a TF-A-specific data structure [TF_BL31]_ used to
+represent the execution state of an image; that is, the state of general purpose
+registers, PC, and SPSR.
+
+This information is used by clients to setup the execution environment of
+subsequent images. A concrete example is the execution of a bootloader such as
+U-Boot in non-secure mode. In TF-A, the runtime firmware BL31 uses an
+`entry_point_info` structure corresponding to the bootloader, to setup the
+general and special purpose registers. Following conventions
+outlined in :ref:`aarch64_receiver`, the general purpose registers consumed
+by the bootloader contain the base addresses of the device tree, and transfer
+list; along with the transfer list signature.
+
+In practice, control might be transferred from BL31 to any combination of
+software running in Secure, Non-Secure, or Realm modes.
+
+.. _tab_entry_point_info:
+.. list-table:: Entry point info type layout
+   :widths: 2 5 2 6
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x102**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - Size of the `entry_point_info` structure in bytes.
+
+   * - ep_info
+     - `sizeof(entry_point_info)`
+     - hdr_size
+     - Holds a single `entry_point_info` structure.
+
 **Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT64)**
 
 This entry type holds a structure that describes the layout of a read-write
