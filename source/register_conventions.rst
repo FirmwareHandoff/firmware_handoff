@@ -102,7 +102,7 @@ absent from the transfer list.
    | R1           | R1 is divided into the following fields:                    |
    |              |                                                             |
    |              | - R1[23:0]: set to the TL signature (4a0f_b10b)             |
-   |              | - X1[31:24]: version of the register convention used. Set to|
+   |              | - R1[31:24]: version of the register convention used. Set to|
    |              |   1 for the AArch32 convention specified in this document.  |
    |              |                                                             |
    +--------------+-------------------------------------------------------------+
