@@ -67,7 +67,10 @@ off the list to a next stage is termed the *Sender*. The firmware stage
 receiving the list is termed the *Receiver*. The *Receiver* can update fields in
 any entry in the list and is allowed to remove entries.
 
-Note: If a firmware phase fails, the execution flow on the previous stage
-should resume from the handoff point. It is recommended that a previous
-phase keeps information on the execution flow prior to handoff either
-explicitly or implicitly in a link register.
+
+.. note::
+
+   If a firmware phase fails, the execution flow on the previous stage
+   should resume from the handoff point. It is recommended that a previous
+   phase keeps information on the execution flow prior to handoff either
+   explicitly or implicitly in a link register.

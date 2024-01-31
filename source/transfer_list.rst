@@ -770,7 +770,7 @@ Specification [TCG_EFI]_.
        flag must be cleared if the transfer list is passed to additional
        firmware components. Default value is "0". Other bits should be set to
        zero.
-   
+
    * - event_log
      - data_size - 0x4
      - hdr_size + 0x4
@@ -814,7 +814,7 @@ and reserved for use as a TPM Command Response Buffer interface.
      - The physical base address of a region of memory reserved for use as a
        TPM's Command Response Buffer region.
 
-   * - crb_size 
+   * - crb_size
      - 0x4
      - hdr_size + 0x8
      - Size of CRB.
