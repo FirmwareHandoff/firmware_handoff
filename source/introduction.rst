@@ -1,4 +1,4 @@
-.. SPDX-License-Identifier: CC-BY-SA-4.0 
+.. SPDX-License-Identifier: CC-BY-SA-4.0
 .. SPDX-FileCopyrightText: Copyright The Firmware Handoff Specification Contributors
 
 Introduction
@@ -27,7 +27,7 @@ An example of a feasible platform-boot architecture is shown in
 stage concept. Platforms are free to adopt any other boot architecture.
 
 .. _fig_boot_phases:
-.. figure:: images/boot_phases.pdf
+.. figure:: images/boot_phases.svg
    :alt: Example boot architecture
 
    Example boot architecture

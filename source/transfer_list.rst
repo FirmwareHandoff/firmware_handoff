@@ -25,7 +25,7 @@ of 8, after the end of the TE[0].
 
 
 .. _fig_list:
-.. figure:: images/handoff_list_diagram.pdf
+.. figure:: images/handoff_list_diagram.svg
    :alt: Transfer list example
    :scale: 85%
 

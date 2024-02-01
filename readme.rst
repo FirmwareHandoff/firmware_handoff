@@ -10,6 +10,7 @@ enable building the specification:
 
 - librsvg2-bin
 - python3-sphinx
+- python3-sphinxcontrib.svg2pdfconverter
 - latexmk
 - texlive-latex-extra
 
