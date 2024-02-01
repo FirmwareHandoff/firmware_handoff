@@ -12,8 +12,11 @@ jobs:
     environment: pr_ci
     steps:
       - uses: actions/checkout@v3
-      - run: sudo apt-get update
-      - run: sudo apt-get install -y librsvg2-bin python3-sphinx latexmk texlive-latex-extra
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin \
+            python3-sphinx latexmk texlive-latex-extra \
+            python3-sphinxcontrib.svg2pdfconverter
       - run: make latexpdf
       - run: make html
 
