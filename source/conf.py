@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'firmware handoff'
-copyright = '2022, Firmware handoff contributors'
+copyright = '2022-2024, Firmware handoff contributors'
 author = 'Firmware handoff contributors'
 
 # The short X.Y version

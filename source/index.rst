@@ -5,11 +5,11 @@ Firmware handoff specification
 ==============================
 
 .. toctree::
+   :numbered:
    :maxdepth: 3
    :caption: Contents
-
-   references
 
    introduction.rst
    transfer_list.rst
    register_conventions.rst
+   references
