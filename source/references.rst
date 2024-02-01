@@ -1,6 +1,18 @@
 .. SPDX-License-Identifier: CC-BY-SA-4.0
 .. SPDX-FileCopyrightText: Copyright The Firmware Handoff Specification Contributors
 
+.. raw:: latex
+
+   \cleardoublepage
+   \begingroup
+   \renewcommand\chapter[1]{\endgroup}
+   \phantomsection
+
+.. _refs:
+
+References
+==========
+
 .. [DT] `Devicetree Specification <https://www.devicetree.org/specifications/>`
 
 .. [PI] `Volume 3:Platform Initialization -- Shared Architectural Elements`, UEFI forum
