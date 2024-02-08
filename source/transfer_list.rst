@@ -879,6 +879,9 @@ including TF-A, OP-TEE and Hafnium.
    * - :ref:`0x108 <tab_entry_point_info32>`
      - AArch32 Entry Point Info
 
+   * - :ref:`0x10a <tab_tb_fw_config>`
+     - DT Trusted Boot Firmware Configuration (``TB_FW_CONFIG``)
+
 **OP-TEE pageable part address entry layout (XFERLIST_OPTEE_PAGEABLE_PART_ADDR)**
 
 This entry type holds the address of OP-TEE pageable part which is described in
@@ -1373,6 +1376,44 @@ subsequent images. It's usage is identical to the 64-bit form represented by
      - 0x4
      - hdr_size + 0x20
      - Register R3.
+
+**DT Trusted Boot Firmware Configuration entry layout
+(XFERLIST_TB_FW_CONFIG)**
+
+The Trusted Boot Firmware Configuration (TB_FW_CONFIG) is a dynamic
+configuration file used in TF-A to configure properties relating to trusted
+firmware (i.e. IO policies, and Mbed TLS heap info) [TB_FW_CONFIG]_. This TE
+contains in its data section the configuration file in DT format [DT]_.
+
+.. _tab_tb_fw_config:
+.. list-table:: Trusted Boot Firmware Configuration entry type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x10a**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the configuration file in bytes.
+
+   * - tb_fw_config
+     - data_size
+     - hdr_size
+     - Holds a Trusted Boot Firmware Configuration file in DT format.
+
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
 .. |current_version| replace:: `0x1`

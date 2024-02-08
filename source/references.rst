@@ -23,6 +23,8 @@ References
 
 .. [OPTEECore] `OP-TEE Core Architecture v4.5 <https://optee.readthedocs.io/en/4.5.0/architecture/core.html>`__
 
+.. [TB_FW_CONFIG] `Trusted Boot Firmware Configuration bindings <https://trustedfirmware-a.readthedocs.io/en/latest/components/fconf/tb_fw_bindings.html>`__
+
 .. [TFAFFAMB] TF-A Secure Partition Manager: `FF-A manifest binding to device tree v2.12 <https://trustedfirmware-a.readthedocs.io/en/v2.12.0/components/ffa-manifest-binding.html>`__
 
 .. [TCG_EFI] `Trusted Computing Group EFI Protocol Specification v15 <https://trustedcomputinggroup.org/wp-content/uploads/TCG_EFI_Platform_1_22_Final_-v15.pdf>`__
