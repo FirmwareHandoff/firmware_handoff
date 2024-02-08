@@ -862,7 +862,7 @@ the OP-TEE OS.
      - The size (in bytes) of the address of OP-TEE pageable part which must be set to **8**.
 
    * - pp_addr
-     - data_size
+     - 0x8
      - hdr_size
      - Holds the address of OP-TEE pageable part
 
