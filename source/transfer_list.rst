@@ -950,6 +950,43 @@ software running in Secure, Non-Secure, or Realm modes.
      - hdr_size
      - Holds a single `entry_point_info` structure.
 
+**DT Trusted Boot Firmware Configuration entry layout
+(XFERLIST_TB_FW_CONFIG)**
+
+The Trusted Boot Firmware Configuration (TB_FW_CONFIG) is a dynamic
+configuration file used in TF-A to configure properties relating to trusted
+firmware (i.e. IO policies, and Mbed TLS heap info) [TB_FW_CONFIG]_. This TE
+contains in its data section the configuration file in DT format [DT]_.
+
+.. _tab_tb_fw_config:
+.. list-table:: Trusted Boot Firmware Configuration entry type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x103**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the configuration file in bytes.
+
+   * - tb_fw_config
+     - data_size
+     - hdr_size
+     - Holds a Trusted Boot Firmware Configuration file in DT format.
+
 **Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT64)**
 
 This entry type holds a structure that describes the layout of a read-write
