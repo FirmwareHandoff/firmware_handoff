@@ -902,5 +902,49 @@ This manifest contains the SPMC attribute node consumed by the SPMD
      - hdr_size
      - Holds a SPMC manifest image in DT format.
 
+**Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT64)**
+
+This entry type holds a structure that describes the layout of a read-write
+memory region. TF-A defines this structure and uses it to convey to BL2 the
+extent of memory it has available to perform read-write operations on. BL2 maps
+the memory described by the layout into its memory map during platform setup. If
+other memory types are required (i.e.  read-only memory) separate TE's should be
+defined.
+
+.. _tab_rw_mem_layout:
+.. list-table:: Layout for a RW memory layout entry
+   :widths: 2 5 5 6
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **104**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the layout in bytes.
+
+   * - addr
+     - 8
+     - hdr_size
+     - The base address of the memory region.
+
+   * - size
+     - 8
+     - hdr_size + 8
+     - The size of the memory region.
+
+
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
 .. |current_version| replace:: `0x1`
