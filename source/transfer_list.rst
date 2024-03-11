@@ -937,13 +937,13 @@ into its memory map during platform setup. If other memory types are required
      - The size of the layout in bytes.
 
    * - addr
-     - 8
+     - 0x8
      - hdr_size
      - The base address of the memory region.
 
    * - size
-     - 8
-     - hdr_size + 8
+     - 0x8
+     - hdr_size + 0x8
      - The size of the memory region.
 
 
