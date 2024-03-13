@@ -26,3 +26,5 @@ References
 .. [TFAFFAMB] TF-A Secure Partition Manager: `FF-A manifest binding to device tree <https://trustedfirmware-a.readthedocs.io/en/latest/components/ffa-manifest-binding.html>`__
 
 .. [TCG_EFI] `Trusted Computing Group EFI Protocol Specification <https://trustedcomputinggroup.org/resource/tcg-efi-protocol-specification>`__
+
+.. [TFADYNCFG] `Dynamic Configuration During Cold Boot <https://trustedfirmware-a.readthedocs.io/en/latest/design/firmware-design.html#dynamic-configuration-during-cold-boot>`__
