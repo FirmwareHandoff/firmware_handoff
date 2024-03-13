@@ -910,7 +910,7 @@ memory region.
 For example, TF-A uses it to convey to BL2 the extent of memory it has available
 to perform read-write operations on. BL2 maps the memory described by the layout
 into its memory map during platform setup. If other memory types are required
-(i.e.  read-only memory) separate TE's should be defined.
+(i.e. read-only memory) separate TE's should be defined.
 
 .. _tab_rw_mem_layout:
 .. list-table:: Layout for a RW memory layout entry
