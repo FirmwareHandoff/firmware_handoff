@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: pr_ci
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           sudo apt-get update
           sudo apt-get install -y librsvg2-bin \
@@ -21,7 +21,7 @@ jobs:
       - run: make html
 
       - name: Archive pdf
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmware_handoff.pdf
           path: build/latex/firmware_handoff.pdf
