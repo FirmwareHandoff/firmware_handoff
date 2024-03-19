@@ -28,3 +28,9 @@ References
 .. [TCG_EFI] `Trusted Computing Group EFI Protocol Specification <https://trustedcomputinggroup.org/resource/tcg-efi-protocol-specification>`__
 
 .. [TF_BL31] `Data structures used in the BL31 cold boot interface <https://trustedfirmware-a.readthedocs.io/en/latest/design/firmware-design.html#data-structures-used-in-the-bl31-cold-boot-interface>`__
+
+.. [DICE] `Trusted Computing Group, DICE Layering Architecture <https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf>`__
+
+.. [Open-DICE] `Open Profile for DICE <https://pigweed.googlesource.com/open-dice/+/refs/heads/main/docs/specification.md>`__
+
+.. [Android-Open-DICE] `Android Profile for DICE <https://android.googlesource.com/platform/external/open-dice/+/HEAD/docs/android.md>`__
