@@ -512,6 +512,7 @@ The following entry types are currently defined:
 - TPM event log entry: tag_id = 5 (:numref:`tpm_evlog_entry`).
 - TPM CRB base entry: tag_id = 6 (:numref:`tpm_crb_base_entry`).
 - Entries related to Trusted Firmware (:numref:`tf_entries`).
+- Entries related to Open DICE (:numref:`opendice_entries`).
 
 .. _void_entry:
 
@@ -994,6 +995,177 @@ into its memory map during platform setup. If other memory types are required
      - hdr_size + 0x8
      - The size of the memory region.
 
+.. _opendice_entries:
+
+Entries related to Open DICE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These entries contain [Open-DICE]_ information elements that must be transferred between boot stages in a DICE architecture where a DICE Protection Environment (DPE) is not used.
+
+This includes the Compound Device Identifier (CDI) used for attestation and the CDI used for sealing, as well as the accumulated certificate chain.
+
+.. note::
+  As described in [DICE]_, CDIs are very sensitive data and are as long-lived as the layers they represent.
+  Each layer is therefore responsible for the proper handling of the CDIs it owns, as well as the derived cryptographic key material.
+  In particular, any given layer is expected to use and erase the CDI it received.
+  While the CDI is used, the layer needs the ability to prevent access to the CDI and disclosure of the value.
+
+The following entry types are currently defined:
+
+**CDI for attestation (XFERLIST_OPENDICE_CDI_ATTEST)**
+
+This entry type holds the "Attestation CDI" described in [Open-DICE]_.
+
+The CDI computed by the Sender's boot stage SHALL be added to the TL.
+The CDI received from the previous boot stage (i.e., DICE layer) MUST NOT be forwarded.
+
+.. _tab_dice_cdi_attest:
+.. list-table:: DICE attestation CDI
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x200**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size (in bytes) of the CDI
+
+   * - profile_id
+     - 0x4
+     - 0x8
+     - the Open DICE profile identifier (See :numref:`opendice_profile_id` for the allowed values)
+
+   * - cdi_attest
+     - data_size - 0x4
+     - 0xc
+     - Holds the CDI used for attestation
+
+**CDI for sealing (XFERLIST_OPENDICE_CDI_SEAL)**
+
+This entry type holds the "Sealing CDI" described in [Open-DICE]_.
+
+The CDI computed by the Sender's boot stage SHALL be added to the TL.
+The CDI received from the previous boot stage (i.e., DICE layer) MUST NOT be forwarded.
+
+.. _tab_dice_cdi_seal:
+.. list-table:: DICE sealing CDI
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x201**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size (in bytes) of the sealing CDI
+
+   * - profile_id
+     - 0x4
+     - 0x8
+     - the Open DICE profile identifier (See :numref:`opendice_profile_id` for the allowed values)
+
+   * - cdi_seal
+     - data_size - 0x4
+     - 0xc
+     - Holds the CDI used for sealing
+
+**Certificate (XFERLIST_OPENDICE_CERT)**
+
+This entry type holds one certificate of the Open DICE certificate chain.
+
+No specific certificate format is mandated.
+Examples of certificate formats include X.509, CWT, and C509.
+Note that, in general, one chain MAY contain certificates in different formats.
+
+The Sender SHALL add an entry of this type containing the layer's certificate.
+
+The leaf layer will collect all the entries of this type to reconstruct the certificate chain.
+
+.. _tab_opendice_cert:
+.. list-table:: DICE certificate chain
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x202**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size (in bytes) of the certificate chain
+
+   * - profile_id
+     - 0x4
+     - 0x8
+     - the Open DICE profile identifier (See :numref:`opendice_profile_id` for the allowed values)
+
+   * - cert
+     - data_size - 0x4
+     - 0xc
+     - Holds the certificate for the next layer, produced by the current layer
+
+.. _opendice_profile_id:
+
+Profile Identifiers
+"""""""""""""""""""
+
+.. _tab_opendice_profile_id:
+.. list-table:: Open-DICE Profile Identifiers
+   :widths: 3 8 8
+
+   * - profile_id
+     - Profile Name
+     - Reference
+
+   *  - 0x0001
+      - android.14
+      - [Android-Open-DICE]_
+
+   *  - 0x0002
+      - android.15
+      - [Android-Open-DICE]_
+
+   *  - 0x0003
+      - android.16
+      - [Android-Open-DICE]_
+
+Open-DICE profiles SHALL be registered in :numref:`tab_opendice_profile_id`.
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
 .. |current_version| replace:: `0x1`
