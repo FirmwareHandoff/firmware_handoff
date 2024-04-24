@@ -102,7 +102,7 @@ absent from the transfer list.
    | R1           | R1 is divided into the following fields:                    |
    |              |                                                             |
    |              | - R1[23:0]: set to the 24 least significant bits of TL      |
-                      signature (0f_b10b).                                      |
+   |              |   signature (0f_b10b).                                      |
    |              | - R1[31:24]: version of the register convention used. Set to|
    |              |   1 for the AArch32 convention specified in this document.  |
    |              |                                                             |
