@@ -28,3 +28,5 @@ References
 .. [TCG_EFI] `Trusted Computing Group EFI Protocol Specification <https://trustedcomputinggroup.org/resource/tcg-efi-protocol-specification>`__
 
 .. [TF_BL31] `Data structures used in the BL31 cold boot interface <https://trustedfirmware-a.readthedocs.io/en/latest/design/firmware-design.html#data-structures-used-in-the-bl31-cold-boot-interface>`__
+
+.. [TB_FW_CONFIG] `Trusted Boot Firmware Configuration bindings <https://trustedfirmware-a.readthedocs.io/en/latest/components/fconf/tb_fw_bindings.html>`__
