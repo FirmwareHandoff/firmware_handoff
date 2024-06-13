@@ -819,6 +819,46 @@ and reserved for use as a TPM Command Response Buffer interface.
      - hdr_size + 0x8
      - Size of CRB.
 
+Cryptogragphy library heap information (XFERLIST_CRYPTO_LIB_HEAP_INFO)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The cryptograph library heap info specifies the base address and size of a
+region of memory on the heap that has been carved out for use by a cryptography
+library.
+
+.. _tab_tpm_crb_base:
+.. list-table:: Cryptogragphy library heap info type layout
+   :widths: 4 2 4 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **7**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - This value should be set to **0x10** i.e. sizeof(heap_address) + sizeof(heap_size).
+
+   * - heap_address
+     - 0x8
+     - hdr_size
+     - The physical base address of a region of memory on the heap reserved for
+       use by a cryptography library.
+
+   * - heap_size
+     - 0x8
+     - hdr_size + 0x8
+     - Size of region of memory.
 
 
 .. _tf_entries:
