@@ -820,7 +820,6 @@ and reserved for use as a TPM Command Response Buffer interface.
      - Size of CRB.
 
 
-
 .. _tf_entries:
 
 Entries related to Trusted Firmware
@@ -993,6 +992,48 @@ into its memory map during platform setup. If other memory types are required
      - 0x8
      - hdr_size + 0x8
      - The size of the memory region.
+
+Mbed-TLS heap information (XFERLIST_MBEDTLS_HEAP_INFO)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Specifies the location and size of a memory region, carved out for
+stack-based memory allocation in Mbed-TLS. The buffer address and size are
+passed to later stages for intialisation of Mbed-TLS.
+
+.. _tab_tpm_crb_base:
+.. list-table:: Mbed-TLS heap info type layout
+   :widths: 4 2 4 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x105**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - This value should be set to **0x10** i.e. sizeof(heap_address) + sizeof(heap_size).
+
+   * - heap_address
+     - 0x8
+     - hdr_size
+     - The address of memory to be used as the heap.
+
+   * - heap_size
+     - 0x8
+     - hdr_size + 0x8
+     - Size of memory region.
+
 
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
