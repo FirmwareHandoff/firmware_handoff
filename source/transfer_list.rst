@@ -1005,8 +1005,9 @@ These entries contain [Open-DICE]_ information elements that must be transferred
 This includes the Compound Device Identifier (CDI) used for attestation and the CDI used for sealing, as well as the accumulated certificate chain.
 
 .. note::
-  As described in [DICE]_, CDIs are very sensitive data and are as long-lived as the layers they represent.
-  Each layer is therefore responsible for the proper handling of the CDIs it owns, as well as the derived cryptographic key material.
+
+  As described in [DICE]_, a CDI is highly sensitive data that must not be stored in unprotected storage with a longer lifespan than the controlling DICE layer.
+  Each layer is responsible for the proper handling of the CDIs it owns, as well as the derived cryptographic key material.
   In particular, any given layer is expected to use and erase the CDI it received.
   While the CDI is used, the layer needs the ability to prevent access to the CDI and disclosure of the value.
 
