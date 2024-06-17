@@ -1048,7 +1048,7 @@ The CDI received from the previous boot stage MUST NOT be forwarded.
    * - profile_id
      - 0x4
      - 0x8
-     - the Open DICE profile identifier (See :numref:`opendice_profile_id` for the allowed values)
+     - the Open DICE profile identifier (See :numref:`tab_opendice_profile_id` for the allowed values)
 
    * - cdi_attest
      - data_size - 0x4
@@ -1090,7 +1090,7 @@ The CDI received from the previous boot stage MUST NOT be forwarded.
    * - profile_id
      - 0x4
      - 0x8
-     - the Open DICE profile identifier (See :numref:`opendice_profile_id` for the allowed values)
+     - the Open DICE profile identifier (See :numref:`tab_opendice_profile_id` for the allowed values)
 
    * - cdi_seal
      - data_size - 0x4
@@ -1135,7 +1135,7 @@ The leaf layer will collect all the entries of this type to reconstruct the cert
    * - profile_id
      - 0x4
      - 0x8
-     - the Open DICE profile identifier (See :numref:`opendice_profile_id` for the allowed values)
+     - the Open DICE profile identifier (See :numref:`tab_opendice_profile_id` for the allowed values)
 
    * - cert
      - data_size - 0x4
