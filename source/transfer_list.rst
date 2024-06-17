@@ -1018,7 +1018,8 @@ The following entry types are currently defined:
 This entry type holds the "Attestation CDI" described in [Open-DICE]_.
 
 The CDI computed by the Sender's boot stage SHALL be added to the TL.
-The CDI received from the previous boot stage (i.e., DICE layer) MUST NOT be forwarded.
+The CDI computed by the Sender's boot stage MUST use a profile that is compatible with the CDI received from the previous boot stage (i.e., DICE layer).
+The CDI received from the previous boot stage MUST NOT be forwarded.
 
 .. _tab_dice_cdi_attest:
 .. list-table:: DICE attestation CDI
@@ -1059,7 +1060,8 @@ The CDI received from the previous boot stage (i.e., DICE layer) MUST NOT be for
 This entry type holds the "Sealing CDI" described in [Open-DICE]_.
 
 The CDI computed by the Sender's boot stage SHALL be added to the TL.
-The CDI received from the previous boot stage (i.e., DICE layer) MUST NOT be forwarded.
+The CDI computed by the Sender's boot stage MUST use a profile that is compatible with the CDI received from the previous boot stage (i.e., DICE layer).
+The CDI received from the previous boot stage MUST NOT be forwarded.
 
 .. _tab_dice_cdi_seal:
 .. list-table:: DICE sealing CDI
