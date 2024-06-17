@@ -973,7 +973,7 @@ into its memory map during platform setup. If other memory types are required
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **104**.
+     - The tag_id field must be set to **0x104**.
 
    * - hdr_size
      - 0x1
