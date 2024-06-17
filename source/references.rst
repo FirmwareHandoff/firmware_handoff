@@ -33,4 +33,10 @@ References
 
 .. [Open-DICE] `Open Profile for DICE <https://pigweed.googlesource.com/open-dice/+/refs/heads/main/docs/specification.md>`__
 
+.. [Open-DICE_certs] `Open Profile for DICE, Certificate Details <https://pigweed.googlesource.com/open-dice/+/refs/heads/main/docs/specification.md#certificate-details>`__
+
 .. [Android-Open-DICE] `Android Profile for DICE <https://android.googlesource.com/platform/external/open-dice/+/HEAD/docs/android.md>`__
+
+.. [X.509] `IETF, Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile <https://www.rfc-editor.org/rfc/rfc5280>`__
+
+.. [CWT] `IETF, CBOR Web Token (CWT) <https://www.rfc-editor.org/rfc/rfc8392>`__

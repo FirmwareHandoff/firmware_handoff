@@ -1099,9 +1099,8 @@ The CDI received from the previous boot stage (i.e., DICE layer) MUST NOT be for
 
 This entry type holds one certificate of the Open DICE certificate chain.
 
-No specific certificate format is mandated.
-Examples of certificate formats include X.509, CWT, and C509.
-Note that, in general, one chain MAY contain certificates in different formats.
+Open DICE [Open-DICE_certs]_ allows two certificate types: X.509 [X.509]_ and CBOR Web Tokens [CWT]_.
+In general, one chain MAY contain certificates in different formats.
 
 The Sender SHALL add an entry of this type containing the layer's certificate.
 
