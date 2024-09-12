@@ -11,6 +11,7 @@ enable building the specification:
 - librsvg2-bin
 - python3-sphinx
 - python3-sphinxcontrib.svg2pdfconverter
+- python3-sphinx-rtd-theme
 - latexmk
 - texlive-latex-extra
 
@@ -22,11 +23,15 @@ Building the document
 
 The following are use to generate the specification:
 
- - pdf:
-    make latexpdf
+- pdf:
 
- - html:
-    make html
+    .. code::
+        make latexpdf
+
+- html:
+
+    .. code::
+        make html
 
 Status
 ======
