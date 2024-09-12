@@ -1,27 +1,54 @@
 name: Build specification
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
-  build:
-    name: build pdf and html
-    runs-on: ubuntu-latest
-    environment: pr_ci
+  build-docs:
+    name: "Build PDF and HTML documentation"
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - run: |
+      - uses: actions/setup-python@v5
+      - name: Install Packages
+        run: |
           sudo apt-get update
           sudo apt-get install -y librsvg2-bin \
             python3-sphinx latexmk texlive-latex-extra \
-            python3-sphinxcontrib.svg2pdfconverter
-      - run: make latexpdf
-      - run: make html
+            python3-sphinxcontrib.svg2pdfconverter sphinx-multiversion \
+            python3-sphinx-rtd-theme
 
-      - name: Archive pdf
+      - name: Generate PDF Documentation
+        run: |
+          make latexpdf
+
+      - name: Generate HTML Documentation
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            git fetch --tags
+
+            sphinx-multiversion source build/html
+            cp source/assets/redirect.html build/html/index.html
+          else
+            make html
+          fi
+
+      - name: Archive PDF
         uses: actions/upload-artifact@v4
         with:
           name: firmware_handoff.pdf
           path: build/latex/firmware_handoff.pdf
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/html
+          force_orphan: true
