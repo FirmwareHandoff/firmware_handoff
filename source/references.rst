@@ -28,3 +28,15 @@ References
 .. [TCG_EFI] `Trusted Computing Group EFI Protocol Specification <https://trustedcomputinggroup.org/resource/tcg-efi-protocol-specification>`__
 
 .. [TF_BL31] `Data structures used in the BL31 cold boot interface <https://trustedfirmware-a.readthedocs.io/en/latest/design/firmware-design.html#data-structures-used-in-the-bl31-cold-boot-interface>`__
+
+.. [DICE] `Trusted Computing Group, DICE Layering Architecture <https://trustedcomputinggroup.org/wp-content/uploads/DICE-Layering-Architecture-r19_pub.pdf>`__
+
+.. [Open-DICE] `Open Profile for DICE <https://pigweed.googlesource.com/open-dice/+/refs/heads/main/docs/specification.md>`__
+
+.. [Open-DICE_certs] `Open Profile for DICE, Certificate Details <https://pigweed.googlesource.com/open-dice/+/refs/heads/main/docs/specification.md#certificate-details>`__
+
+.. [Android-Open-DICE] `Android Profile for DICE <https://android.googlesource.com/platform/external/open-dice/+/HEAD/docs/android.md>`__
+
+.. [X.509] `IETF, Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile <https://www.rfc-editor.org/rfc/rfc5280>`__
+
+.. [CWT] `IETF, CBOR Web Token (CWT) <https://www.rfc-editor.org/rfc/rfc8392>`__
