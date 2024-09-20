@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. Register usage at handoff boundary &mdash; Firmware Handoff 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+
+  
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=049aceee"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. References" href="references.html" />
+    <link rel="prev" title="2. Transfer list" href="transfer_list.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Firmware Handoff
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer_list.html">2. Transfer list</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Register usage at handoff boundary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#arm-architecture-bindings">3.1. Arm Architecture bindings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#aarch64-receiver">3.1.1. AArch64 Receiver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aarch32-receiver">3.1.2. AArch32 Receiver</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">4. References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Firmware Handoff</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>Register usage at handoff boundary</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/register_conventions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="register-usage-at-handoff-boundary">
+<span id="handoff-arch-bindings"></span><h1><span class="section-number">3. </span>Register usage at handoff boundary<a class="headerlink" href="#register-usage-at-handoff-boundary" title="Link to this heading"></a></h1>
+<p>This section specifies the architecture bindings for the TL exchange at the
+handoff boundary.</p>
+<section id="arm-architecture-bindings">
+<h2><span class="section-number">3.1. </span>Arm Architecture bindings<a class="headerlink" href="#arm-architecture-bindings" title="Link to this heading"></a></h2>
+<p>The Receiver of a TL can be in the AArch32 or AArch64 execution state <a class="reference internal" href="references.html#armarm" id="id1"><span>[ArmARM]</span></a>.
+The register convention to be used at the handoff boundary is determined by the
+execution state of the Receiver.
+If the Receiver is in the AArch64 execution state, then the convention listed
+in <a class="reference internal" href="#aarch64-receiver"><span class="std std-numref">Section 3.1.1</span></a> is used.  If the Receiver is in the AArch32 execution state,
+then the convention listed in <a class="reference internal" href="#aarch32-receiver"><span class="std std-numref">Section 3.1.2</span></a> is used.</p>
+<section id="aarch64-receiver">
+<span id="id2"></span><h3><span class="section-number">3.1.1. </span>AArch64 Receiver<a class="headerlink" href="#aarch64-receiver" title="Link to this heading"></a></h3>
+<p>A Sender must use the register convention listed in Table 3 when handing off to an AArch64 receiver.
+In this register convention, the pointer to the 64-bit tl_base_pa address is passed on register X3.</p>
+<p>Register X2 must be set to 0.</p>
+<p>The 32 least significant bits in register X1 contains the TL signature. The
+<em>signature</em> provides guarantees to a receiver that X3 holds the <em>tl_base_pa</em>. The
+bits [39:32] of X1 contain the version of the register convention being used.
+<a class="reference internal" href="#tab-aarch64-convention"><span class="std std-numref">Table 17</span></a> specifies the version 1 of the AArch64 handoff register convention.</p>
+<p>Register X0 must hold a pointer to the hardware description devicetree, if the
+transfer list contains an FDT entry. This field is set to 0 if an fdt entry is
+absent from the transfer list.</p>
+<span id="tab-aarch64-convention"></span><table class="docutils align-default" id="id4">
+<caption><span class="caption-number">Table 17 </span><span class="caption-text">AArch64 register assignment at the handoff boundary</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Register</p></td>
+<td><p>Data present at the handoff boundary</p></td>
+</tr>
+<tr class="row-even"><td><p>X0</p></td>
+<td><p>Compatibility location for passing a platform description
+devicetree. 0 if devicetree is not present. If an fdt entry
+(tag_id=1) exists in the TL, then X0 must point to the fdt
+contained in that entry.</p></td>
+</tr>
+<tr class="row-odd"><td><p>X1</p></td>
+<td><p>X1 is divided into the following fields:</p>
+<ul class="simple">
+<li><p>X1[31:0]: set to the TL signature (4a0f_b10b)</p></li>
+<li><p>X1[39:32]: version of the register convention used. Set to
+1 for the AArch64 convention specified in this document.</p></li>
+<li><p>X1[63:40]: reserved, must be zero.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>X2</p></td>
+<td><p>Reserved, must be zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p>X3</p></td>
+<td><p>tl_base_pa</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="aarch32-receiver">
+<span id="id3"></span><h3><span class="section-number">3.1.2. </span>AArch32 Receiver<a class="headerlink" href="#aarch32-receiver" title="Link to this heading"></a></h3>
+<p>A Sender must use the register convention listed in
+<a class="reference internal" href="#tab-aarch32-convention"><span class="std std-numref">Table 18</span></a> when handing off to an AArch32 receiver. In
+this register convention, the pointer to the 32-bit
+tl_base_pa address is passed on register R3.
+Register R1 contains the TL signature, to provide guarantees to a receiver that
+R3 holds the tl_base_pa.</p>
+<p>The 24 least significant bits in register R1 contains the 24 least significant
+bits of TL signature. The signature provides guarantees to a receiver that X3
+holds the tl_base_pa. The 8 most significant bits of R1 contain the version of
+the register convention being used. Table 4 specifies the version 1 of the AArch32
+handoff register convention.</p>
+<p>Register R2 must hold a pointer to the hardware description devicetree, if the
+transfer list contains an FDT entry. This field is set to 0 if an fdt entry is
+absent from the transfer list.</p>
+<span id="tab-aarch32-convention"></span><table class="docutils align-default" id="id5">
+<caption><span class="caption-number">Table 18 </span><span class="caption-text">AArch32 register assignment at the handoff boundary</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Register</p></td>
+<td><p>Data present at the handoff boundary</p></td>
+</tr>
+<tr class="row-even"><td><p>R0</p></td>
+<td><p>Reserved, must be zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p>R1</p></td>
+<td><p>R1 is divided into the following fields:</p>
+<ul class="simple">
+<li><p>R1[23:0]: set to the 24 least significant bits of TL
+signature (0f_b10b).</p></li>
+<li><p>R1[31:24]: version of the register convention used. Set to
+1 for the AArch32 convention specified in this document.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>R2</p></td>
+<td><p>Compatibility location for passing a platform description
+devicetree. 0 if devicetree is not present. If an fdt entry
+(tag_id=1) exists in the TL, then R2 must point to the fdt
+contained in that entry.</p></td>
+</tr>
+<tr class="row-odd"><td><p>R3</p></td>
+<td><p>tl_base_pa</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="transfer_list.html" class="btn btn-neutral float-left" title="2. Transfer list" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="references.html" class="btn btn-neutral float-right" title="4. References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2024, Firmware handoff contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: main
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../v0.9/register_conventions.html">v0.9</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="register_conventions.html">main</a></dd>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

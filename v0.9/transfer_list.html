@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transfer list &mdash; Firmware Handoff 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+
+  
+  
+        <script src="_static/jquery.js?v=8dae8fb0"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=049aceee"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Register usage at handoff boundary" href="register_conventions.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Firmware Handoff
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Transfer list</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#transfer-list-requirements">Transfer list requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transfer-list-header">Transfer list header</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tl-entry-header">TL entry header</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#standard-operations">Standard operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#validating-a-tl-header">Validating a TL header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reading-a-tl">Reading a TL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-a-new-te">Adding a new TE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-a-new-te-with-special-data-alignment-requirement">Adding a new TE with special data alignment requirement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-tl">Creating a TL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#relocating-a-tl">Relocating a TL</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#entry-type-allocation">Entry type allocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#standard-transfer-entries">Standard transfer entries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#empty-entry-layout-xferlist-void">Empty entry layout (XFERLIST_VOID)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fdt-entry-layout-xferlist-fdt">FDT entry layout (XFERLIST_FDT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hob-block-entry-layout-xferlist-hob-b">HOB block entry layout (XFERLIST_HOB_B)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hob-list-entry-layout-xferlist-hob-l">HOB list entry layout (XFERLIST_HOB_L)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#acpi-table-aggregate-entry-layout-xferlist-acpi-aggr">ACPI table aggregate entry layout (XFERLIST_ACPI_AGGR)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="register_conventions.html">Register usage at handoff boundary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Firmware Handoff</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Transfer list</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/transfer_list.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="transfer-list">
+<span id="sec-tl"></span><h1>Transfer list<a class="headerlink" href="#transfer-list" title="Link to this heading"></a></h1>
+<p>The TL is composed of a TL header which is followed by sequence of Transfer
+Entries (TE). The whole TL is contiguous in physical address space. The TL
+header and all the TEs are 8-byte aligned (we use <code class="code docutils literal notranslate"><span class="pre">align8()</span></code> to denote this).
+The TL header specifies the number of bytes occupied by the
+TL. The TEs are defined in <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_tl_entry_hdr</span></code> and
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_std_entries</span></code>. Each TE carries a header which contains an
+identifier, <code class="code docutils literal notranslate"><span class="pre">tag_id</span></code>, that is used to determine the content of the associated
+TE. The TL header is located at <code class="code docutils literal notranslate"><span class="pre">tl_base_pa</span></code>. The <code class="code docutils literal notranslate"><span class="pre">tl_base_pa</span></code> is passed in the
+register allocated for that handoff boundary (as specified in
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">handoff_arch_bindings</span></code>). A
+depiction of the TL is present in <a class="reference internal" href="#fig-list"><span class="std std-numref">Fig. 2</span></a> , there the first TE in
+the list (TE[0]) is shown to start at the end of the TL header
+(<code class="code docutils literal notranslate"><span class="pre">tl_base_pa</span> <span class="pre">+</span> <span class="pre">8</span></code>). The second TE in the list (TE[1]) starts at the next multiple
+of 8, after the end of the TE[0].</p>
+<figure class="align-default" id="id10">
+<span id="fig-list"></span><a class="reference internal image-reference" href="images/handoff_list_diagram.pdf"><img alt="Transfer list example" src="images/handoff_list_diagram.pdf" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Transfer list example</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="transfer-list-requirements">
+<h2>Transfer list requirements<a class="headerlink" href="#transfer-list-requirements" title="Link to this heading"></a></h2>
+<p><strong>R1:</strong> The tl_base_pa address must be at a 8-byte boundary.</p>
+<p><strong>R2:</strong> All fields defined in this specification must be stored in memory with little-endian byte order.</p>
+<p><strong>R3:</strong> The base address of a TE must be the 8-byte aligned address immediately after the end of the previous entry (or TL header, if the TE is the first entry on the TL).</p>
+<p><strong>R4:</strong> When relocating the TL, the offset from <code class="code docutils literal notranslate"><span class="pre">tl_base_pa</span></code> to the nearest alignment boundary specified by the <code class="code docutils literal notranslate"><span class="pre">alignment</span></code> field in the TL header must be preserved.</p>
+</section>
+<section id="transfer-list-header">
+<h2>Transfer list header<a class="headerlink" href="#transfer-list-header" title="Link to this heading"></a></h2>
+<p>A TL must begin with a TL header. The layout of the TL header is shown in
+<a class="reference internal" href="#tab-tl-header"><span class="std std-numref">Table 1</span></a>.  The presence of a TL header can be verified by
+inspecting the signature field which must contain the 0x6e_d0ff value.  The
+version field determines the contents of the handoff start header. The version
+will only be changed by an update to this specification when new TL header or
+TE header fields are defined (i.e. not when allocating new tag IDs), and all
+changes will be backwards-compatible to older readers.</p>
+<span id="tab-tl-header"></span><table class="docutils align-default" id="id11">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">TL header</span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 57.1%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Field</p></td>
+<td><p>Size (bytes)</p></td>
+<td><p>Offset (bytes)</p></td>
+<td><p>Description</p></td>
+</tr>
+<tr class="row-even"><td><p>signature</p></td>
+<td><p>0x4</p></td>
+<td><p>0x0</p></td>
+<td><p>The value of signature must be <code class="code docutils literal notranslate"><span class="pre">0x6e_d0ff</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>checksum</p></td>
+<td><p>0x1</p></td>
+<td><p>0x4</p></td>
+<td><p>The checksum is used to ensure the data contained within the list is intact. The checksum is set to a value such that the sum over every byte in the {<code class="code docutils literal notranslate"><span class="pre">tl_base_pa</span></code>, …, <code class="code docutils literal notranslate"><span class="pre">tl_base_pa</span> <span class="pre">+</span> <span class="pre">size</span> <span class="pre">-</span> <span class="pre">1</span></code>} address range, modulo 256, is equal to 0. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as 0. Note that the checksum includes the TL header, all TEs and the inter-TE padding, but not the range reserved for future TE additions up to max_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.)</p></td>
+</tr>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>0x1</p></td>
+<td><p>0x5</p></td>
+<td><p>The version of the TL header. This field is set to <code class="code docutils literal notranslate"><span class="pre">0x1</span></code> for the TL header layout described in this version of the table. Code that encounters a TL with a version higher than it knows to support may still read the TL and all its TEs, and assume that it is backwards-compatible to previous versions (ignoring any extra bytes in a potentially larger TL or TE header). However, code may not append new entries to a TL unless it knows how to append entries for the specified version.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hdr_size</p></td>
+<td><p>0x1</p></td>
+<td><p>0x6</p></td>
+<td><p>The size of this TL header in bytes. This field is set to 16 for the TL header layout described in this version of the table.</p></td>
+</tr>
+<tr class="row-even"><td><p>alignment</p></td>
+<td><p>0x1</p></td>
+<td><p>0x7</p></td>
+<td><p>The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is 8 so this value should be set to 3. It should be updated whenever a new TE is added with a larger requirement than the current value.</p></td>
+</tr>
+<tr class="row-odd"><td><p>size</p></td>
+<td><p>0x4</p></td>
+<td><p>0x8</p></td>
+<td><p>The number of bytes occupied by the TL. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. It must be a multiple of 8 (i.e. it includes the inter-TE padding after the end of the last TE). This field must be updated when any entry is added to the TL.</p></td>
+</tr>
+<tr class="row-even"><td><p>max_size</p></td>
+<td><p>0x4</p></td>
+<td><p>0xc</p></td>
+<td><p>The maximum number of bytes that the TL can occupy. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocate the TL and update this field accordingly, provided that the TL requirements are respected. This field must be a multiple of 8.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="tl-entry-header">
+<span id="sec-tl-entry-hdr"></span><h2>TL entry header<a class="headerlink" href="#tl-entry-header" title="Link to this heading"></a></h2>
+<p>All TEs start with an entry header followed by a data section.</p>
+<p>Note: the size of an entry (hdr_size + data_size) is not mandatorily an 8-byte
+multiple. When traversing the TL firmware must compute the next TE address following
+R3.</p>
+<p>For example, assume the current TE is <code class="code docutils literal notranslate"><span class="pre">te</span></code> and its address is <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code>.  Using
+C language notation, a derivation of the base address of the next TE
+(next_base_addr) is the following:</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="n">next_base_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">align8</span><span class="p">(</span><span class="n">te_base_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">te</span><span class="p">.</span><span class="n">hdr_size</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">te</span><span class="p">.</span><span class="n">data_size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The TE header is defined in <a class="reference internal" href="#tab-te-header"><span class="std std-numref">Table 2</span></a>.</p>
+<span id="tab-te-header"></span><table class="docutils align-default" id="id12">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">TE header</span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 57.1%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Field</p></td>
+<td><p>Size (bytes)</p></td>
+<td><p>Offset (bytes)</p></td>
+<td><p>Description</p></td>
+</tr>
+<tr class="row-even"><td><p>tag_id</p></td>
+<td><p>0x3</p></td>
+<td><p>0x0</p></td>
+<td><p>The entry type identifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hdr_size</p></td>
+<td><p>0x1</p></td>
+<td><p>0x3</p></td>
+<td><p>The size of this entry header in bytes. This field is set to 8 for the TE header layout described in this version of the table.</p></td>
+</tr>
+<tr class="row-even"><td><p>data_size</p></td>
+<td><p>0x4</p></td>
+<td><p>0x4</p></td>
+<td><p>The exact size of the data content in bytes, not including inter-TE padding. May be 0.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="standard-operations">
+<span id="sec-operations"></span><h2>Standard operations<a class="headerlink" href="#standard-operations" title="Link to this heading"></a></h2>
+<p>This section describes the valid operations that can be performed on a TL in
+more detail, in order to clarify how to use the various fields and to serve as a
+guideline for implementation.</p>
+<section id="validating-a-tl-header">
+<h3>Validating a TL header<a class="headerlink" href="#validating-a-tl-header" title="Link to this heading"></a></h3>
+<p>Inputs:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>: Base address of the existing TL.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Compare <code class="code docutils literal notranslate"><span class="pre">tl.signature</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x0</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x6e_d0ff</span></code>. On a mismatch,
+abort (this is not a valid TL).</p></li>
+<li><p>Compare <code class="code docutils literal notranslate"><span class="pre">tl.version</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x5</span></code>) to the expected version
+(currently <code class="code docutils literal notranslate"><span class="pre">0x1</span></code>). If there is an exact match, the TL is valid
+for all operations outlined in this section. If <code class="code docutils literal notranslate"><span class="pre">tl.version</span></code> is larger, the
+TL is valid for reading but must not be modified or relocated. If
+<code class="code docutils literal notranslate"><span class="pre">tl.version</span></code> is smaller, either abort or switch to code designed to
+interpret the respective previous version of this specification (note that
+the version number <code class="code docutils literal notranslate"><span class="pre">0x0</span></code> is illegal and processing should always abort if it
+is found).</p></li>
+<li><p><em>(optional)</em> Check that <code class="code docutils literal notranslate"><span class="pre">tl.size</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x8</span></code>) is smaller or equal
+to <code class="code docutils literal notranslate"><span class="pre">tl.max_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0xc</span></code>), and that <code class="code docutils literal notranslate"><span class="pre">tl.max_size</span></code> is smaller or
+equal to the size of the total area reserved for the TL (if known). If not,
+abort (TL is corrupted).</p></li>
+<li><p><em>(optional)</em> Check that the sum of <code class="code docutils literal notranslate"><span class="pre">tl.size</span></code> bytes starting at <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>
+minus <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code> is equal to <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>. If not, abort (TL is corrupted).</p></li>
+</ol>
+</section>
+<section id="reading-a-tl">
+<h3>Reading a TL<a class="headerlink" href="#reading-a-tl" title="Link to this heading"></a></h3>
+<p>Inputs:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>: Base address of the existing TL.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Calculate <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code> as <code class="code docutils literal notranslate"><span class="pre">align8(tl_base_addr</span> <span class="pre">+</span> <span class="pre">tl.hdr_size)</span></code>. (Do not
+hardcode the value for <code class="code docutils literal notranslate"><span class="pre">tl.hdr_size</span></code>!)</p></li>
+<li><p>While <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">-</span> <span class="pre">tl_base_addr</span></code> is smaller or equal to <code class="code docutils literal notranslate"><span class="pre">tl.size</span></code>:</p>
+<ol class="arabic simple">
+<li><p><em>(optional)</em> Check that <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">te.hdr_size</span> <span class="pre">+</span> <span class="pre">te.data_size</span> <span class="pre">-</span> <span class="pre">tl_base_addr</span></code>
+is smaller or equal to <code class="code docutils literal notranslate"><span class="pre">tl.size</span></code>, otherwise abort (the TL is corrupted).</p></li>
+<li><p>If <code class="code docutils literal notranslate"><span class="pre">te.tag_id</span></code> (<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x0</span></code>) is a known tag, interpret the data
+at <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">te.hdr_size</span></code> accordingly. (Do not hardcode the value
+for <code class="code docutils literal notranslate"><span class="pre">te.hdr_size</span></code>, even for known tags!) Otherwise, ignore the tag and
+proceed with the next step.</p></li>
+<li><p>Add <code class="code docutils literal notranslate"><span class="pre">te.hdr_size</span> <span class="pre">+</span> <span class="pre">te.data_size</span></code> to <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code>.</p></li>
+</ol>
+</li>
+</ol>
+</section>
+<section id="adding-a-new-te">
+<h3>Adding a new TE<a class="headerlink" href="#adding-a-new-te" title="Link to this heading"></a></h3>
+<p>Inputs:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>: Base address of the TL to add a TE to.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">new_tag_id</span></code>: ID number of the tag for the new TE.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">new_data_size</span></code>: Size in bytes of the data to be encapsulated in the TE.</p></li>
+<li><p>[data]: Data to be copied into the TE or generated on the fly.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p><em>(optional)</em> Follow the steps in <a class="reference internal" href="#reading-a-tl">Reading a TL</a> to look for a TE where
+<code class="code docutils literal notranslate"><span class="pre">te.tag_id</span></code> is <code class="code docutils literal notranslate"><span class="pre">0x0</span></code> (XFERLIST_VOID) and <code class="code docutils literal notranslate"><span class="pre">te.data_size</span></code> is greater or equal
+to <code class="code docutils literal notranslate"><span class="pre">new_data_size</span></code>. If found:</p>
+<ol class="arabic simple">
+<li><p>Remember <code class="code docutils literal notranslate"><span class="pre">te.data_size</span></code> as <code class="code docutils literal notranslate"><span class="pre">old_void_data_size</span></code>.</p></li>
+<li><p>Use the <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code> of this tag for the rest of the operation.</p></li>
+<li><p>Subtract the sum of <code class="code docutils literal notranslate"><span class="pre">align8(new_data_size</span> <span class="pre">+</span> <span class="pre">0x8)</span></code> bytes starting at
+<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code> from <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+<li><p>Skip the next step (step 2) with all its substeps.</p></li>
+</ol>
+</li>
+<li><p>Calculate <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code> as <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">tl.size</span></code>.</p>
+<ol class="arabic simple">
+<li><p>If <code class="code docutils literal notranslate"><span class="pre">tl.max_size</span> <span class="pre">-</span> <span class="pre">tl.size</span></code> is smaller than <code class="code docutils literal notranslate"><span class="pre">align8(new_data_size</span> <span class="pre">+</span> <span class="pre">0x8)</span></code>,
+abort (not enough room to add TE).</p></li>
+<li><p>Subtract the sum of the 4 bytes from <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x8</span></code> to <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0xc</span></code>
+from <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+<li><p>Add <code class="code docutils literal notranslate"><span class="pre">align8(new_data_size</span> <span class="pre">+</span> <span class="pre">0x8)</span></code> to <code class="code docutils literal notranslate"><span class="pre">tl.size</span></code>.</p></li>
+<li><p>Add the sum of the 4 bytes from <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x8</span></code> to <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0xc</span></code>
+to <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+</ol>
+</li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">te.tag_id</span></code> (<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x0</span></code>) to <code class="code docutils literal notranslate"><span class="pre">new_tag_id</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">te.hdr_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x3</span></code>) to <code class="code docutils literal notranslate"><span class="pre">8</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">te.data_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x4</span></code>) to <code class="code docutils literal notranslate"><span class="pre">new_data_size</span></code>.</p></li>
+<li><p>Copy or generate the TE data into <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x8</span></code>.</p></li>
+<li><p>Add the sum of <code class="code docutils literal notranslate"><span class="pre">align8(new_data_size</span> <span class="pre">+</span> <span class="pre">0x8)</span></code> bytes starting at <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code>
+to <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+<li><p>If an existing XFERLIST_VOID TE was chosen to be overwritten in step 1, and
+<code class="code docutils literal notranslate"><span class="pre">old_void_data_size</span> <span class="pre">-</span> <span class="pre">new_data_size</span></code> is greater or equal to <code class="code docutils literal notranslate"><span class="pre">0x8</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">align8(new_data_size</span> <span class="pre">+</span> <span class="pre">0x8)</span></code> as the new <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code>
+for a new XFERLIST_VOID tag.</p></li>
+<li><p>Subtract the sum of the 8 bytes from <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code> to <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x8</span></code>
+from <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">te.tag_id</span></code> (<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x0</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x0</span></code> (XFERLIST_VOID).</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">te.hdr_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x3</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x8</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">te.data_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x4</span></code>) to
+<code class="code docutils literal notranslate"><span class="pre">old_void_data_size</span> <span class="pre">-</span> <span class="pre">align8(new_data_size)</span> <span class="pre">-</span> <span class="pre">0x8</span></code>.</p></li>
+<li><p>Add the sum of the 8 bytes from <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span></code> to <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">0x8</span></code>
+to <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+</ol>
+</li>
+</ol>
+</section>
+<section id="adding-a-new-te-with-special-data-alignment-requirement">
+<h3>Adding a new TE with special data alignment requirement<a class="headerlink" href="#adding-a-new-te-with-special-data-alignment-requirement" title="Link to this heading"></a></h3>
+<p>Inputs:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>: Base address of the TL to add a TE to.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">new_tag_id</span></code>: ID number of the tag for the new TE.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">new_alignment</span></code>: The alignment boundary as a power of 2 that the data must be aligned to.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">new_data_size</span></code>: Size in bytes of the data to be encapsulated in the TE.</p></li>
+<li><p>[data]: Data to be copied into the TE or generated on the fly.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Calculate <code class="code docutils literal notranslate"><span class="pre">alignment_mask</span></code> as <code class="code docutils literal notranslate"><span class="pre">(1</span> <span class="pre">&lt;&lt;</span> <span class="pre">new_alignment)</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p></li>
+<li><p>If <code class="code docutils literal notranslate"><span class="pre">(tl_base_addr</span> <span class="pre">+</span> <span class="pre">tl.size)</span> <span class="pre">&amp;</span> <span class="pre">alignment_mask</span></code> is not <code class="code docutils literal notranslate"><span class="pre">0x0</span></code>, follow the
+steps in <a class="reference internal" href="#adding-a-new-te">Adding a new TE</a> with the following inputs (bypass the option to
+overwrite an existing XFERLIST_VOID TE):</p>
+<ol class="arabic simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code> remains the same</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">new_tag_id</span></code> is <code class="code docutils literal notranslate"><span class="pre">0x0</span></code> (XFERLIST_VOID)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">new_data_size</span></code> is <code class="code docutils literal notranslate"><span class="pre">(1</span> <span class="pre">&lt;&lt;</span> <span class="pre">new_alignment)</span> <span class="pre">-</span> <span class="pre">((tl_base_addr</span> <span class="pre">+</span> <span class="pre">tl.size)</span> <span class="pre">&amp;</span> <span class="pre">alignment_mask)</span> <span class="pre">-</span> <span class="pre">0x8</span></code>.</p></li>
+<li><p>No data (i.e. just don’t touch the bytes that form the data portion for this TE).</p></li>
+</ol>
+</li>
+<li><p>Follow the steps in <a class="reference internal" href="#adding-a-new-te">Adding a new TE</a> with the original inputs (again bypass
+the option to overwrite an existing XFERLIST_VOID TE).</p></li>
+<li><p>If <code class="code docutils literal notranslate"><span class="pre">new_alignment</span></code> is larger than <code class="code docutils literal notranslate"><span class="pre">tl.alignment</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Subtract <code class="code docutils literal notranslate"><span class="pre">tl.alignment</span></code> from <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.alignment</span></code> to <code class="code docutils literal notranslate"><span class="pre">new_alignment</span></code>.</p></li>
+<li><p>Add <code class="code docutils literal notranslate"><span class="pre">tl.alignment</span></code> to <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+</ol>
+</li>
+</ol>
+</section>
+<section id="creating-a-tl">
+<h3>Creating a TL<a class="headerlink" href="#creating-a-tl" title="Link to this heading"></a></h3>
+<p>Inputs:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>: Base address where to place the new TL.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">available_size</span></code>: Available size in bytes to reserve for the TL after <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Check that <code class="code docutils literal notranslate"><span class="pre">available_size</span></code> is larger than <code class="code docutils literal notranslate"><span class="pre">0x10</span></code>, otherwise abort.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.signature</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x0</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x6e_d0ff</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x4</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x0</span></code> (for now).</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.version</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x5</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x1</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.hdr_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x6</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x10</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.alignment</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x7</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x3</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.size</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x8</span></code>) to <code class="code docutils literal notranslate"><span class="pre">0x10</span></code>.</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.max_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0xc</span></code>) to <code class="code docutils literal notranslate"><span class="pre">available_size</span></code>.</p></li>
+<li><p>Calculate the checksum as the sum of all bytes from <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code> to
+<code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span> <span class="pre">+</span> <span class="pre">0x10</span></code>, and write the result to <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code>.</p></li>
+</ol>
+</section>
+<section id="relocating-a-tl">
+<h3>Relocating a TL<a class="headerlink" href="#relocating-a-tl" title="Link to this heading"></a></h3>
+<p>Inputs:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code>: Base address of the existing TL.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">target_base</span></code>: Base address of the target region to relocate into.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">target_size</span></code>: Total size in bytes of the target region to relocate into.</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Calculate <code class="code docutils literal notranslate"><span class="pre">alignment_mask</span></code> as <code class="code docutils literal notranslate"><span class="pre">(1</span> <span class="pre">&lt;&lt;</span> <span class="pre">tl.alignment)</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p></li>
+<li><p>Calculate <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span></code> as <code class="code docutils literal notranslate"><span class="pre">(target_base</span> <span class="pre">+</span> <span class="pre">alignment_mask)</span> <span class="pre">&amp;</span> <span class="pre">~alignment_mask</span></code>.</p></li>
+<li><p>If <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span></code> is below <code class="code docutils literal notranslate"><span class="pre">target_base</span></code>, add <code class="code docutils literal notranslate"><span class="pre">alignment_mask</span> <span class="pre">+</span> <span class="pre">1</span></code> to <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span></code>.</p></li>
+<li><p>If <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">-</span> <span class="pre">target_base</span> <span class="pre">+</span> <span class="pre">tl.size</span></code> is larger than <code class="code docutils literal notranslate"><span class="pre">target_size</span></code>, abort
+(not enough space to relocate).</p></li>
+<li><p>Copy <code class="code docutils literal notranslate"><span class="pre">tl.size</span></code> bytes from <code class="code docutils literal notranslate"><span class="pre">tl_base_addr</span></code> to <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span></code>.</p></li>
+<li><p>Subtract the sum of the 4 bytes from <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">+</span> <span class="pre">0xc</span></code> to <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">+</span> <span class="pre">0x10</span></code>
+from <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code> (<code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">+</span> <span class="pre">0x4</span></code>).</p></li>
+<li><p>Set <code class="code docutils literal notranslate"><span class="pre">tl.max_size</span></code> (<code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">+</span> <span class="pre">0xc</span></code>) to <code class="code docutils literal notranslate"><span class="pre">target_size</span> <span class="pre">-</span> <span class="pre">new_tl_base</span></code>.</p></li>
+<li><p>Add the sum of the 4 bytes from <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">+</span> <span class="pre">0xc</span></code> to <code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">+</span> <span class="pre">0x10</span></code>
+to <code class="code docutils literal notranslate"><span class="pre">tl.checksum</span></code> (<code class="code docutils literal notranslate"><span class="pre">new_tl_base</span> <span class="pre">+</span> <span class="pre">0x4</span></code>).</p></li>
+</ol>
+</section>
+</section>
+<section id="entry-type-allocation">
+<h2>Entry type allocation<a class="headerlink" href="#entry-type-allocation" title="Link to this heading"></a></h2>
+<p>Tag IDs must be allocated in this specification before use. A new tag ID can be
+allocated by submitting a pull request to this repository that adds a
+description of the respective TE data layout to this specification. Tag IDs do
+not have to be allocated in order. Submitters are encouraged to try to group
+tag IDs together in logical clusters at 16 or 256-aligned boundaries (e.g. all
+tags related to a particular chipset or to a particular firmware project could
+use adjacent tag numbers), but there are no predefined ranges and no
+reservations of tag ranges for specific use.</p>
+<p>Tags are expected to have a simple layout (representable by a C structure) and
+each tag should only represent data for a single logical concept. Data for
+multiple distinct concepts should be split across different tags, even if
+they’re always expected to appear together on the first platform adding the tag
+(to encourage reusability in different situations). Alternatively, complex data
+may be represented in a different kind of well-established handoff data
+structure (e.g. FDT <a class="reference internal" href="references.html#dt" id="id1"><span>[DT]</span></a>, HOB <a class="reference internal" href="references.html#pi" id="id2"><span>[PI]</span></a>) that is inserted into the TL as a single
+TE. The same tag ID may occur multiple times in the TL to represent multiple
+instances of the same kind of object. Tag layouts (including the meaning of all
+fields) are considered stable after being added to this specification and may
+never be changed in a backwards-incompatible way. If a backwards-incompatible
+change is desired, a new tag ID should be allocated for the new version of the
+layout instead.</p>
+<p>Tag layouts may be changed in a backwards-compatible manner by allowing new
+valid values in existing fields (including reserved fields), as long as the
+original layout definition clearly defined how unknown values in those fields
+should be handled, and the rest of the TE would still be considered valid and
+correct for older readers that consider the new values unknown. TE layouts may
+also be expanded by adding new fields at the end, with the same restrictions.
+TEs should not contain explicit version numbers and instead just use the
+<code class="code docutils literal notranslate"><span class="pre">data_size</span></code> value to infer how many fields exist. TE layouts which have been
+changed like this must clearly document which fields or valid values were added
+at a later time, and in what order.</p>
+<p>The {0xff_f000, …, 0xff_ffff} range is reserved for non-standardized use.
+Anyone is free to use tags from that range for any custom TE layout without
+adding their definitions to this specification first. The use of this range is
+<em>strongly discouraged</em> for anything other than local experiments or code that
+will only ever be used in closed-source components owned by the entity
+controlling the entire final firmware image. In particular, a TE just
+containing platform-specific data or internal structures specific to a single
+firmware implementation is no reason not to allocate a standardized tag for it
+in this specification. Since standards often emerge organically, the goal is to
+create unique tag IDs for everything just in case it turns out to be useful in
+more applications than initially anticipated. Basically, whenever you’re
+submitting code for a new TE layout to any public open-source project, that’s
+probably a good indication that you should allocate a tag ID for it in this
+specification.</p>
+<span id="tab-tag-id-ranges"></span><table class="docutils align-default" id="id13">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">Tag ID ranges</span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 27.3%" />
+<col style="width: 72.7%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>tag ID range</p></td>
+<td><p>Description</p></td>
+</tr>
+<tr class="row-even"><td><p>0x0 – 0x7f_ffff</p></td>
+<td><p>Standardized range. Any tag ID in this range must first be allocated in this specification before being used. The allocation of the tag ID requires the entry layout to be defined as well.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0x80_0000 – 0xff_efff</p></td>
+<td><p>Reserved. (Can later be used to extend standardized range if necessary.)</p></td>
+</tr>
+<tr class="row-even"><td><p>0xff_f000 – 0xff_ffff</p></td>
+<td><p>Non-standardized range. Tag IDs in this range can be used without allocation in this specification. Using this range for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator is strongly discouraged. Tags in this range are not tracked in this repository and PRs to add tag defintions for this range will not be accepted.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="standard-transfer-entries">
+<span id="sec-std-entries"></span><h2>Standard transfer entries<a class="headerlink" href="#standard-transfer-entries" title="Link to this heading"></a></h2>
+<p>The following entry types are currently defined:</p>
+<ul class="simple">
+<li><p>empty entry: tag_id = 0  (<code class="xref std std-numref docutils literal notranslate"><span class="pre">void_entry</span></code>).</p></li>
+<li><p>fdt entry: tag_id = 1  (<code class="xref std std-numref docutils literal notranslate"><span class="pre">fdt_entry</span></code>).</p></li>
+<li><p>single HOB block entry: tag_id = 2 (<code class="xref std std-numref docutils literal notranslate"><span class="pre">hob_block_entry</span></code>).</p></li>
+<li><p>HOB list entry: tag_id = 3 (<code class="xref std std-numref docutils literal notranslate"><span class="pre">hob_list_entry</span></code>).</p></li>
+<li><p>ACPI table aggregate entry: tag_id = 4 (<code class="xref std std-numref docutils literal notranslate"><span class="pre">acpi_aggr_entry</span></code>).</p></li>
+</ul>
+<section id="empty-entry-layout-xferlist-void">
+<span id="void-entry"></span><h3>Empty entry layout (XFERLIST_VOID)<a class="headerlink" href="#empty-entry-layout-xferlist-void" title="Link to this heading"></a></h3>
+<p>The empty or void entry should not contain any information to be consumed by any firmware stage.
+The intent of the void entry type is to remove information from the list without needing to
+relocate subsequent entries, or to create padding for entries that require a specific alignment.
+Void entries may be freely overwritten with new TEs, provided the resulting TL remains valid
+(i.e. a void entry can only be overwritten by a TE of equal or smaller size; if the size is more
+than 8 bytes smaller, a new void entry must be created behind the new TE to cover the remaining
+space up to the next TE).</p>
+</section>
+<section id="fdt-entry-layout-xferlist-fdt">
+<span id="fdt-entry"></span><span id="tab-void"></span><h3>FDT entry layout (XFERLIST_FDT)<a class="headerlink" href="#fdt-entry-layout-xferlist-fdt" title="Link to this heading"></a></h3>
+<p>The fdt is defined in <a class="reference internal" href="references.html#dt" id="id3"><span>[DT]</span></a>. The FDT TE contains the fdt in the data section.
+The intent of the FDT entry is to carry the hardware description devicetree in
+the flattened devicetree (FDT) <a class="reference internal" href="references.html#dt" id="id4"><span>[DT]</span></a> representation.</p>
+<span id="tab-fdt"></span><table class="docutils align-default" id="id14">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">FDT type layout</span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 57.1%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Field</p></td>
+<td><p>Size (bytes)</p></td>
+<td><p>Offset (bytes)</p></td>
+<td><p>Description</p></td>
+</tr>
+<tr class="row-even"><td><p>tag_id</p></td>
+<td><p>0x3</p></td>
+<td><p>0x0</p></td>
+<td><p>The tag_id field must be set to <strong>1</strong>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hdr_size</p></td>
+<td><p>0x1</p></td>
+<td><p>0x3</p></td>
+<td><p>The size of this entry header in bytes must be set to <strong>8</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><p>data_size</p></td>
+<td><p>0x4</p></td>
+<td><p>0x4</p></td>
+<td><p>The size of the FDT in bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>fdt</p></td>
+<td><p>data_size</p></td>
+<td><p>hdr_size</p></td>
+<td><p>The fdt field contains the hardware description fdt.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hob-block-entry-layout-xferlist-hob-b">
+<span id="hob-block-entry"></span><h3>HOB block entry layout (XFERLIST_HOB_B)<a class="headerlink" href="#hob-block-entry-layout-xferlist-hob-b" title="Link to this heading"></a></h3>
+<p>The HOB is defined in <a class="reference internal" href="references.html#pi" id="id5"><span>[PI]</span></a>. This entry type encapsulates a single HOB block.
+The intent of the HOB block entry is to hold a single HOB block. A complete HOB
+list can then be constructed, by a receiver, by obtaining all the HOB blocks in
+the TL and following the HOB list requirements defined in <a class="reference internal" href="references.html#pi" id="id6"><span>[PI]</span></a>.</p>
+<span id="tab-hob-block"></span><table class="docutils align-default" id="id15">
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">HOB block type layout</span><a class="headerlink" href="#id15" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 57.1%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Field</p></td>
+<td><p>Size (bytes)</p></td>
+<td><p>Offset (bytes)</p></td>
+<td><p>Description</p></td>
+</tr>
+<tr class="row-even"><td><p>tag_id</p></td>
+<td><p>0x3</p></td>
+<td><p>0x0</p></td>
+<td><p>The tag_id field must be set to <strong>2</strong>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hdr_size</p></td>
+<td><p>0x1</p></td>
+<td><p>0x3</p></td>
+<td><p>The size of this entry header in bytes must be set to <strong>8</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><p>data_size</p></td>
+<td><p>0x4</p></td>
+<td><p>0x4</p></td>
+<td><p>The size of the HOB block in bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hob_block</p></td>
+<td><p>data_size</p></td>
+<td><p>hdr_size</p></td>
+<td><p>Holds a single HOB block.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hob-list-entry-layout-xferlist-hob-l">
+<span id="hob-list-entry"></span><h3>HOB list entry layout (XFERLIST_HOB_L)<a class="headerlink" href="#hob-list-entry-layout-xferlist-hob-l" title="Link to this heading"></a></h3>
+<p>The HOB list is defined in <a class="reference internal" href="references.html#pi" id="id7"><span>[PI]</span></a>. The HOB list starts with a PHIT block and can
+contain an arbitrary number of HOB blocks. This entry type encapsulates a
+complete HOB list.  An enclosed HOB list must respect the HOB list constraints
+specified in <a class="reference internal" href="references.html#pi" id="id8"><span>[PI]</span></a>.</p>
+<span id="tab-hob-list"></span><table class="docutils align-default" id="id16">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">HOB list type layout</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 57.1%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Field</p></td>
+<td><p>Size (bytes)</p></td>
+<td><p>Offset (bytes)</p></td>
+<td><p>Description</p></td>
+</tr>
+<tr class="row-even"><td><p>tag_id</p></td>
+<td><p>0x3</p></td>
+<td><p>0x0</p></td>
+<td><p>The tag_id field must be set to <strong>3</strong>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hdr_size</p></td>
+<td><p>0x1</p></td>
+<td><p>0x3</p></td>
+<td><p>The size of this entry header in bytes must be set to <strong>8</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><p>data_size</p></td>
+<td><p>0x4</p></td>
+<td><p>0x4</p></td>
+<td><p>The size of the HOB list in bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hob_list</p></td>
+<td><p>data_size</p></td>
+<td><p>hdr_size</p></td>
+<td><p>Holds a complete HOB list.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="acpi-table-aggregate-entry-layout-xferlist-acpi-aggr">
+<span id="acpi-aggr-entry"></span><h3>ACPI table aggregate entry layout (XFERLIST_ACPI_AGGR)<a class="headerlink" href="#acpi-table-aggregate-entry-layout-xferlist-acpi-aggr" title="Link to this heading"></a></h3>
+<p>This entry type holds one or more ACPI tables. The first table must start at
+offset <code class="code docutils literal notranslate"><span class="pre">hdr_size</span></code> from the start of the entry. Since ACPI tables usually have an
+alignment requirement larger than 8, writers may first need to create an
+XFERLIST_VOID padding entry so that the subsequent <code class="code docutils literal notranslate"><span class="pre">te_base_addr</span> <span class="pre">+</span> <span class="pre">te.hdr_size</span></code>
+will be correctly aligned. Any subsequent ACPI tables must be located at the
+next 16-byte alligned address following the preceding ACPI table. Note that each
+ACPI table has a <code class="code docutils literal notranslate"><span class="pre">Length</span></code> field in the ACPI table header <a class="reference internal" href="references.html#acpi" id="id9"><span>[ACPI]</span></a>, which must be
+used to determine the end of the ACPI table.  The <code class="code docutils literal notranslate"><span class="pre">data_size</span></code> value must be set
+such that the last ACPI table in this entry ends at offset
+<code class="code docutils literal notranslate"><span class="pre">hdr_size</span> <span class="pre">+</span> <span class="pre">data_size</span></code> from the start of the entry.</p>
+<span id="tab-acpi-aggr"></span><table class="docutils align-default" id="id17">
+<caption><span class="caption-number">Table 7 </span><span class="caption-text">ACPI table aggregate type layout</span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 14.3%" />
+<col style="width: 57.1%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Field</p></td>
+<td><p>Size (bytes)</p></td>
+<td><p>Offset (bytes)</p></td>
+<td><p>Description</p></td>
+</tr>
+<tr class="row-even"><td><p>tag_id</p></td>
+<td><p>0x3</p></td>
+<td><p>0x0</p></td>
+<td><p>The tag_id field must be set to <strong>4</strong>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>hdr_size</p></td>
+<td><p>0x1</p></td>
+<td><p>0x3</p></td>
+<td><p>The size of this entry header in bytes must be set to <strong>8</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><p>data_size</p></td>
+<td><p>0x4</p></td>
+<td><p>0x4</p></td>
+<td><p>The size of all included ACPI tables + padding in bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>acpi_tables</p></td>
+<td><p>data_size</p></td>
+<td><p>hdr_size</p></td>
+<td><p>One or more ACPI tables.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="register_conventions.html" class="btn btn-neutral float-right" title="Register usage at handoff boundary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2024, Firmware handoff contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: v0.9
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="transfer_list.html">v0.9</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../main/transfer_list.html">main</a></dd>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
