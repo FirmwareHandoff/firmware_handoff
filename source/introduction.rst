@@ -33,10 +33,10 @@ stage concept. Platforms are free to adopt any other boot architecture.
    Example boot architecture
 
 
-Depending on the platform, the cold-boot initialization can start from a Board
+Depending on the platform, the cold-boot initialization may start from a Board
 Controller which then releases the Application Processor (AP) into execution.
 
-The boot process on the AP can conceptually be broken apart into the following
+The boot process on the AP may conceptually be broken apart into the following
 stages:
 
 * Immutable
@@ -45,14 +45,14 @@ stages:
 
 * Secure Platform Firmware
 
-  * Firmware stage that is executed in a privileged level. It is responsible for loading additional firmware images and optionally performing platform configurations. The stage can be subdivided into other sub-stages. The stage terminates with the transition to the OS Bootloader.
+  * Firmware stage that is executed in a privileged level. It may be responsible for loading additional firmware images and may perform platform configurations. The stage may be subdivided into other sub-stages. The stage should terminate with the transition to the OS Bootloader.
 
 * OS Bootloader
 
-  * The firmware stage that executes before the OS. It is responsible for configuring the platform, loading and transferring the execution to the OS. This stage can be composed of several sub-stages.
+  * The firmware stage that executes before the OS. It should be responsible for configuring the platform, loading and transferring the execution to the OS. This stage may be composed of several sub-stages.
 
 
-Any stage in the AP boot procedure can produce information which is consumed by
+Any stage in the AP boot procedure may produce information which is consumed by
 a later stage.
 This specification defines the concept of *Transfer List* [#BlobList]_ (TL --
 :numref:`sec_tl`). A firmware stage can append information to the TL.
@@ -64,7 +64,7 @@ A firmware stage transfers the execution flow to a next firmware stage at a poin
 *handoff boundary*. The TL is transferred between stages at the *handoff boundary*.
 For a particular *handoff boundary*, the firmware stage that hands
 off the list to a next stage is termed the *Sender*. The firmware stage
-receiving the list is termed the *Receiver*. The *Receiver* can update fields in
+receiving the list is termed the *Receiver*. The *Receiver* may update fields in
 any entry in the list and is allowed to remove entries.
 
 
