@@ -29,6 +29,8 @@ Criteria for patch merge
 Any contribution must be assessed by the maintainers (see Maintainers_).
 A contribution must be acknowledged by every maintainer before being merged.
 
+This specification adopts a lower-case variation of RFC2119.
+The Language used to specify requirements and recommendations must comply with [RFC2119](https://datatracker.ietf.org/doc/html/rfc2119).
 
 .. _DCO: DCO
 .. _LICENSE: LICENSE
