@@ -8,13 +8,13 @@
 Transfer list
 =============
 
-The TL is composed of a TL header which is followed by sequence of Transfer
-Entries (TE). The whole TL is contiguous in physical address space. The TL
+The TL must have a TL header which must be followed by one or more Transfer
+Entries (TE). The whole TL must be contiguous in physical address space. The TL
 header and all the TEs are 8-byte aligned (we use `align8()` to denote this).
 The TL header specifies the number of bytes occupied by the
 TL. The TEs are defined in :numref:`sec_tl_entry_hdr` and
 :numref:`sec_std_entries`. Each TE carries a header which contains an
-identifier, `tag_id`, that is used to determine the content of the associated
+identifier, `tag_id`, that must be used to determine the content of the associated
 TE. The TL header is located at `tl_base_pa`. The `tl_base_pa` is passed in the
 register allocated for that handoff boundary (as specified in
 :numref:`handoff_arch_bindings`). A
@@ -47,10 +47,10 @@ Transfer list header
 --------------------
 
 A TL must begin with a TL header. The layout of the TL header is shown in
-:numref:`tab_tl_header`.  The presence of a TL header can be verified by
+:numref:`tab_tl_header`.  The presence of a TL header may be verified by
 inspecting the signature field which must contain the 4a0f_b10b value.  The
 version field determines the contents of the handoff start header. The version
-will only be changed by an update to this specification when new TL header or
+will only be changed, by an update to this specification, when new TL header or
 TE header fields are defined (i.e. not when allocating new tag IDs), and all
 changes will be backwards-compatible to older readers.
 
@@ -71,12 +71,12 @@ changes will be backwards-compatible to older readers.
    * - checksum
      - 0x1
      - 0x4
-     - If enabled by the flags, the checksum is used to provide basic protection against something overwriting the TL in memory. The checksum is set to a value such that the xor over every byte in the {`tl_base_pa`, …, `tl_base_pa + used_size - 1`} address range, is equal to 0. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as 0. Note that the checksum includes the TL header, all TEs and the inter-TE padding, but not the range reserved for future TE additions up to total_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.). If checksums are not used, this must be 0.
+     - If enabled by the flags, the checksum is used to provide basic protection against something overwriting the TL in memory. The checksum is set to a value such that the xor over every byte in the {`tl_base_pa`, …, `tl_base_pa + used_size - 1`} address range, is equal to 0. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as 0. Note that the checksum must include the TL header, all TEs and the inter-TE padding, but must not include the range reserved for future TE additions up to total_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.). If checksums are not used, this must be 0.
 
    * - version
      - 0x1
      - 0x5
-     - The version of the TL header. This field is set to |current_version| for the TL header layout described in this version of the table. Code that encounters a TL with a version higher than it knows to support may still read the TL and all its TEs, and assume that it is backwards-compatible to previous versions (ignoring any extra bytes in a potentially larger TL or TE header). However, code may not append new entries to a TL unless it knows how to append entries for the specified version.
+     - The version of the TL header. This field must be set to |current_version| for the TL header layout described in this version of the table. Code that encounters a TL with a version higher than it knows to support may still read the TL and all its TEs, and assume that it is backwards-compatible to previous versions (ignoring any extra bytes in a potentially larger TL or TE header). However, code may not append new entries to a TL unless it knows how to append entries for the specified version.
 
    * - hdr_size
      - 0x1
@@ -86,7 +86,7 @@ changes will be backwards-compatible to older readers.
    * - alignment
      - 0x1
      - 0x7
-     - The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is 8 so this value should be set to 3. It should be updated whenever a new TE is added with a larger requirement than the current value.
+     - The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is 8 so this value should be set to 3. It must be updated whenever a new TE is added with a larger requirement than the current value.
 
    * - used_size
      - 0x4
@@ -130,7 +130,7 @@ field.
 
    * - 31:1
      - unused
-     - Reserved for future use. Must be 0 or ignored.
+     - Reserved for future use. Must be 0.
 
 
 .. _sec_tl_entry_hdr:
@@ -138,7 +138,7 @@ field.
 TL entry header
 ---------------
 
-All TEs start with an entry header followed by a data section.
+All TEs must start with an entry header followed by a data section.
 
 Note: the size of an entry (hdr_size + data_size) is not mandatorily an 8-byte
 multiple. When traversing the TL firmware must compute the next TE address following
@@ -172,7 +172,7 @@ The TE header is defined in :numref:`tab_te_header`.
    * - hdr_size
      - 0x1
      - 0x3
-     - The size of this entry header in bytes. This field is set to 8 for the TE header layout described in this version of the table.
+     - The size of this entry header in bytes. This field must be set to 8 for the TE header layout described in this version of the table.
 
    * - data_size
      - 0x4
@@ -192,7 +192,7 @@ may be represented in a different kind of well-established handoff data
 structure (e.g. FDT [DT]_, HOB [PI]_) that is inserted into the TL as a single
 TE. The same tag ID may occur multiple times in the TL to represent multiple
 instances of the same kind of object. Tag layouts (including the meaning of all
-fields) are considered stable after being added to this specification and may
+fields) are considered stable after being added to this specification and must
 never be changed in a backwards-incompatible way. If a backwards-incompatible
 change is desired, a new tag ID should be allocated for the new version of the
 layout instead.
@@ -245,10 +245,11 @@ Anyone is free to use tags from that range for any custom TE layout without
 adding their definitions to this specification first. The use of this range is
 *strongly discouraged* for anything other than local experiments or code that
 will only ever be used in closed-source components owned by the entity
-controlling the entire final firmware image. In particular, a TE just
-containing platform-specific data or internal structures specific to a single
-firmware implementation is no reason not to allocate a standardized tag for it
-in this specification. Since standards often emerge organically, the goal is to
+controlling the entire final firmware image. In particular, a creator of a TE
+that just contains platform-specific data or internal structures specific to
+a single firmware implementation, should allocate a standardized tag for it
+in this specification -- using the non-standardized range is strongly
+discouraged. Since standards often emerge organically, the goal is to
 create unique tag IDs for everything just in case it turns out to be useful in
 more applications than initially anticipated. Basically, whenever you're
 submitting code for a new TE layout to any public open-source project, that's
@@ -270,7 +271,7 @@ specification.
      - Reserved. (Can later be used to extend standardized range if necessary.)
 
    * - 0xff_f000 -- 0xff_ffff
-     - Non-standardized range. Tag IDs in this range can be used without allocation in this specification. Using this range for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator is strongly discouraged. Tags in this range are not tracked in this repository and PRs to add tag defintions for this range will not be accepted.
+     - Non-standardized range. Tag IDs in this range may be used without allocation in this specification. This range should not be used for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator. Tags in this range are not tracked in this repository and PRs to add tag defintions for this range will not be accepted.
 
 
 .. _sec_operations:
@@ -278,7 +279,7 @@ specification.
 Standard operations
 -------------------
 
-This section describes the valid operations that can be performed on a TL in
+This section describes the valid operations that may be performed on a TL in
 more detail, in order to clarify how to use the various fields and to serve as a
 guideline for implementation.
 
