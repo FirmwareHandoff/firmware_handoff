@@ -54,7 +54,7 @@ stages:
 
 Any stage in the AP boot procedure can produce information which is consumed by
 a later stage.
-This specification defines the concept of *Transfer List* (TL --
+This specification defines the concept of *Transfer List* [#BlobList]_ (TL --
 :numref:`sec_tl`). A firmware stage can append information to the TL.
 Any information produced by a firmware stage, meant to be
 consumed by a later firmware stage, must be contained in an entry
@@ -74,3 +74,7 @@ any entry in the list and is allowed to remove entries.
    should resume from the handoff point. It is recommended that a previous
    phase keeps information on the execution flow prior to handoff either
    explicitly or implicitly in a link register.
+
+.. rubric:: Footnotes
+
+.. [#BlobList] The Transfer List specification has its origin in the Blob List implementation developed by the U-Boot community. In some codebases, the term Blob List may be employed. The Blob List and Transfer List terms are interchangeable, the Transfer List and Blob List implementations are fully compatible and equivalent.
