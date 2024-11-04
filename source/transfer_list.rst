@@ -42,6 +42,9 @@ Transfer list requirements
 
 **R4:** When relocating the TL, the offset from `tl_base_pa` to the nearest alignment boundary specified by the `alignment` field in the TL header must be preserved.
 
+**R5:** If a TE type definition contains a sub-type field, then multiple entries of that TE type are allowed in the TL. The TE must have unique values in the sub-type field.
+
+**R6:** A TL must contain at most one entry of each TE type that lacks a sub-type field.
 
 Transfer list header
 --------------------
