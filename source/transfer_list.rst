@@ -951,6 +951,43 @@ software running in Secure, Non-Secure, or Realm modes.
      - hdr_size
      - Holds a single `entry_point_info` structure.
 
+**FF-A SP binary (XFERLIST_FFA_SP_BINARY)**
+
+This entry holds a reference to an FF-A Secure Partition (SP) binary.
+
+This TE type is for an SPMC implementation to identify which entry
+relates to the SP's binary, such that it can install the binary and
+hand-over execution.
+
+.. _tab_ffa_sp_binary:
+.. list-table:: An FF-A SP binary type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x103**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the SP binary in bytes.
+
+   * - ffa_sp_binary
+     - data_size
+     - hdr_size
+     - Holds the FF-A SP binary.
+
 **Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT64)**
 
 This entry type holds a structure that describes the layout of a read-write
