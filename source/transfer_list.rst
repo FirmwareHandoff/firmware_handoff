@@ -922,6 +922,8 @@ initialize itself.
      - hdr_size
      - Holds a SPMC manifest image in DT format.
 
+.. _64_bit_ep_info:
+
 **AArch64 executable entry point information (XFERLIST_EXEC_EP_INFO64)**
 
 This entry type holds the AArch64 variant of `entry_point_info`.
@@ -1133,6 +1135,110 @@ passed to later stages for intialisation of Mbed-TLS.
      - 0x8
      - hdr_size + 0x8
      - Size of memory region.
+
+**AArch32 executable entry point information (XFERLIST_EXEC_EP_INFO32)**
+
+This entry type holds the 32-bit variant of the `entry_point_info`
+structure.  `entry_point_info` is a TF-A-specific data structure [TF_BL31]_ used
+to represent the execution state of an image; that is, the state of general
+purpose registers, PC, and SPSR.
+
+This information is used by clients to setup the execution environment of
+subsequent images. It's usage is identical to the 64-bit form represented by
+:ref:`XFERLIST_EXEC_EP_INFO64<64_bit_ep_info>`.
+
+.. _tab_entry_point_info32:
+.. list-table:: Entry point info type layout (32-bit variant)
+   :widths: 2 3 3 6
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x106**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - Size of the `entry_point_info` structure in bytes.
+
+   * - ep_info_hdr
+     - 0x8
+     - hdr_size
+     - Header of type :ref:`param_header<tab_param_header>` containing structure
+       version, size, and attributes.
+
+   * - pc
+     - 0x4
+     - hdr_size + 0x4
+     - Program counter (entry point into image).
+
+   * - spsr
+     - 0x4
+     - hdr_size + 0x8
+
+     - Saved Program Status Register.
+
+   * - lr_svc
+     - 0x4
+     - hdr_size + 0xc
+     - Link register.
+
+   * - r0
+     - 0x4
+     - hdr_size + 0x10
+     - Register R0.
+
+   * - r1
+     - 0x4
+     - hdr_size + 0x14
+     - Register R1.
+
+   * - r2
+     - 0x4
+     - hdr_size + 0x18
+     - Register R2.
+
+The structures header contains an attributes field which is used to encode the image's
+execution state (i.e., Secure, Non-Secure, or Realm).
+
+.. _tab_param_header:
+.. list-table::  Layout of ``param_header``.
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - type
+     - 0x1
+     - 0x0
+     - Type of the structure.
+
+   * - version
+     - 0x1
+     - 0x1
+     - Version of the structure.
+
+   * - size
+     - 0x2
+     - 0x2
+     - Size of the structure in bytes.
+
+   * - attr
+     - 0x4
+     - 0x4
+     - Structure attributes.
+
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
 .. |current_version| replace:: `0x1`
