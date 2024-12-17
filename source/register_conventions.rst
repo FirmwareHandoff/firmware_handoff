@@ -25,7 +25,7 @@ then the convention listed in :numref:`aarch32_receiver` is used.
 AArch64 Receiver
 ^^^^^^^^^^^^^^^^
 
-A Sender must use the register convention listed in Table 3 when handing off to an AArch64 receiver.
+A Sender must use the register convention listed in :numref:`tab_aarch64_convention` when handing off to an AArch64 receiver.
 In this register convention, the pointer to the 64-bit tl_base_pa address is passed on register X3.
 
 Register X2 must be set to 0.
