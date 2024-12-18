@@ -1032,6 +1032,44 @@ into its memory map during platform setup. If other memory types are required
      - hdr_size + 0x8
      - The size of the memory region.
 
+**DT formatted FF-A manifest entry layout (XFERLIST_DT_FFA_MANIFEST)**
+
+This entry type holds the FF-A manifest image whice is in DT format [DT]_,
+as described in [TFAFFAMB]_.
+This manifest contains the SP (Secure Partition) configuration, consumed
+by the SPMC at boot time.
+
+It may also contain some information to the SP itself.
+
+.. _tab_dt_ffa_manifest:
+.. list-table:: DT formatted FF-A manifest type layout
+   :widths: 2 2 2 8
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to **0x106**.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of FF-A manifest in bytes.
+
+   * - ffa_manifest
+     - data_size
+     - hdr_size
+     - Holds a FF-A manifest image in DT format.
+
 Mbed-TLS heap information (XFERLIST_MBEDTLS_HEAP_INFO)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1072,8 +1110,6 @@ passed to later stages for intialisation of Mbed-TLS.
      - 0x8
      - hdr_size + 0x8
      - Size of memory region.
-
-
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
 .. |current_version| replace:: `0x1`
