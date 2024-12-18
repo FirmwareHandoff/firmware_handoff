@@ -826,7 +826,7 @@ Entries related to Trusted Firmware
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following entry types are defined for Trusted Firmware projects,
-including TF-A and OP-TEE:
+including TF-A, OP-TEE and Hafnium:
 
 **OP-TEE pageable part address entry layout (XFERLIST_OPTEE_PAGEABLE_PART_ADDR)**
 
@@ -868,9 +868,11 @@ the OP-TEE OS.
 **DT formatted SPMC manifest entry layout (XFERLIST_DT_SPMC_MANIFEST)**
 
 This entry type holds the SPMC (Secure Partition Manager Core) manifest image
-which is in DT format [DT]_ and described in [TFAFFAMB]_.
+which is in DT format [DT]_ and described in [SPMCATTR]_.
 This manifest contains the SPMC attribute node consumed by the SPMD
 (Secure Partition Manager Dispatcher) at boot time.
+It may also contain some information for the SPMC implementation, to
+initialize itself.
 
 .. _tab_dt_spmc_manifest:
 .. list-table:: DT formatted SPMC manifest type layout
