@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = "Firmware Handoff"
-copyright = "2022-2024, Firmware handoff contributors"
+copyright = "2022-2025, Firmware handoff contributors"
 author = "Firmware handoff contributors"
 
 # The short X.Y version
@@ -93,6 +93,14 @@ html_theme = "sphinx_rtd_theme"
 #
 
 html_sidebars = {}
+
+# Path to _static directory
+html_static_path = ["_static"]
+
+# Path to css file relative to html_static_path
+html_css_files = [
+    "css/custom.css",
+]
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
