@@ -57,6 +57,7 @@ changes will be backwards-compatible to older readers.
 .. _tab_tl_header:
 .. list-table:: TL header
    :widths: 2 2 2 9
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -118,6 +119,7 @@ field.
 
 .. list-table:: Flags
    :widths: 2 2 8
+   :header-rows: 1
 
    * - Bit
      - Name
@@ -158,6 +160,7 @@ The TE header is defined in :numref:`tab_te_header`.
 
 .. list-table:: TE header
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -260,6 +263,7 @@ specification.
 
 .. list-table:: Tag ID ranges
    :widths: 3 8
+   :header-rows: 1
 
    * - tag ID range
      - Description
@@ -530,6 +534,7 @@ space up to the next TE).
 .. _tab_void:
 .. list-table:: Empty type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -571,6 +576,7 @@ the flattened devicetree (FDT) [DT]_ representation.
 .. _tab_fdt:
 .. list-table:: FDT type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -611,6 +617,7 @@ the TL and following the HOB list requirements defined in [PI]_.
 .. _tab_hob_block:
 .. list-table:: HOB block type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -651,6 +658,7 @@ specified in [PI]_.
 .. _tab_hob_list:
 .. list-table:: HOB list type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -697,6 +705,7 @@ such that the last ACPI table in this entry ends at offset
 .. _tab_acpi_aggr:
 .. list-table:: ACPI table aggregate type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -735,6 +744,7 @@ Specification [TCG_EFI]_.
 .. _tab_tpm_evlog:
 .. list-table:: TPM event log type layout
    :widths: 2 2 4 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -788,6 +798,7 @@ and reserved for use as a TPM Command Response Buffer interface.
 .. _tab_tpm_crb_base:
 .. list-table:: TPM CRB base type layout
    :widths: 4 2 4 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -840,6 +851,7 @@ the OP-TEE OS.
 .. _tab_optee_pageable_part_address:
 .. list-table:: OP-TEE pageable part address type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -878,6 +890,7 @@ initialize itself.
 .. _tab_dt_spmc_manifest:
 .. list-table:: DT formatted SPMC manifest type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -926,6 +939,7 @@ software running in Secure, Non-Secure, or Realm modes.
 .. _tab_entry_point_info:
 .. list-table:: Entry point info type layout
    :widths: 2 5 2 6
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -963,6 +977,7 @@ hand-over execution.
 .. _tab_ffa_sp_binary:
 .. list-table:: An FF-A SP binary type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -1002,6 +1017,7 @@ into its memory map during platform setup. If other memory types are required
 .. _tab_rw_mem_layout:
 .. list-table:: Layout for a RW memory layout entry
    :widths: 2 5 5 6
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -1045,6 +1061,7 @@ It may also contain some information to the SP itself.
 .. _tab_dt_ffa_manifest:
 .. list-table:: DT formatted FF-A manifest type layout
    :widths: 2 2 2 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)
@@ -1081,6 +1098,7 @@ passed to later stages for intialisation of Mbed-TLS.
 .. _tab_tpm_crb_base:
 .. list-table:: Mbed-TLS heap info type layout
    :widths: 4 2 4 8
+   :header-rows: 1
 
    * - Field
      - Size (bytes)

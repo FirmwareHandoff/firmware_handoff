@@ -47,7 +47,7 @@ absent from the transfer list.
 
    +--------------+-------------------------------------------------------------+
    | Register     | Data present at the handoff boundary                        |
-   +--------------+-------------------------------------------------------------+
+   +==============+=============================================================+
    | X0           | Compatibility location for passing a platform description   |
    |              | devicetree. 0 if devicetree is not present. If an fdt entry |
    |              | (tag_id=1) exists in the TL, then X0 must point to the fdt  |
@@ -96,7 +96,7 @@ absent from the transfer list.
 
    +--------------+-------------------------------------------------------------+
    | Register     | Data present at the handoff boundary                        |
-   +--------------+-------------------------------------------------------------+
+   +==============+=============================================================+
    | R0           | Reserved, must be zero.                                     |
    +--------------+-------------------------------------------------------------+
    | R1           | R1 is divided into the following fields:                    |
