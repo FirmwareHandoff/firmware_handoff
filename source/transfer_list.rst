@@ -1093,8 +1093,7 @@ It may also contain some information to the SP itself.
      - hdr_size
      - Holds a FF-A manifest image in DT format.
 
-Mbed-TLS heap information (XFERLIST_MBEDTLS_HEAP_INFO)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Mbed-TLS heap information (XFERLIST_MBEDTLS_HEAP_INFO)**
 
 Specifies the location and size of a memory region, carved out for
 stack-based memory allocation in Mbed-TLS. The buffer address and size are
