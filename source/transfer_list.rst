@@ -1095,7 +1095,7 @@ Specifies the location and size of a memory region, carved out for
 stack-based memory allocation in Mbed-TLS. The buffer address and size are
 passed to later stages for intialisation of Mbed-TLS.
 
-.. _tab_tpm_crb_base:
+.. _tab_mbedtls_heap_info:
 .. list-table:: Mbed-TLS heap info type layout
    :widths: 4 2 4 8
    :header-rows: 1
