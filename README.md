@@ -18,10 +18,11 @@ For an Ubuntu development machine, install the following packages to build the s
 - `python3-sphinx`
 - `python3-sphinxcontrib.svg2pdfconverter`
 - `python3-sphinx-rtd-theme`
+- `sphinx-multiversion`
 - `latexmk`
 - `texlive-latex-extra`
 
-**Note:** This list has been tested on Ubuntu 20.04 LTS and 22.04 LTS running on AArch64 and AMD64.
+**Note:** This list has been tested on Ubuntu 22.04 LTS and 24.04 LTS running on AArch64 and AMD64.
 
 Building the document
 =====================
