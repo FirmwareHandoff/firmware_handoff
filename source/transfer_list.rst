@@ -246,13 +246,18 @@ reservations of tag ranges for specific use.
 The {0xff_f000, ..., 0xff_ffff} range is reserved for non-standardized use.
 Anyone is free to use tags from that range for any custom TE layout without
 adding their definitions to this specification first. The use of this range is
-*strongly discouraged* for anything other than local experiments or code that
-will only ever be used in closed-source components owned by the entity
-controlling the entire final firmware image. In particular, a creator of a TE
-that just contains platform-specific data or internal structures specific to
-a single firmware implementation, should allocate a standardized tag for it
-in this specification -- using the non-standardized range is strongly
-discouraged. Since standards often emerge organically, the goal is to
+*strongly discouraged* for anything other than:
+
+* local experiments,
+
+* code that will only ever be used in closed-source components owned by the
+  entity controlling the entire final firmware image, or
+
+* TEs internal to a single component or transferred between closely coupled
+  components in a given firmware implementation.
+
+Even in the latter case, if the TE definition is stable the non-standardized
+range is discouraged. Since standards often emerge organically, the goal is to
 create unique tag IDs for everything just in case it turns out to be useful in
 more applications than initially anticipated. Basically, whenever you're
 submitting code for a new TE layout to any public open-source project, that's
