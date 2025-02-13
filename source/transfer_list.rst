@@ -42,7 +42,6 @@ Transfer list requirements
 
 **R4:** When relocating the TL, the offset from `tl_base_pa` to the nearest alignment boundary specified by the `alignment` field in the TL header must be preserved.
 
-
 Transfer list header
 --------------------
 
@@ -193,8 +192,7 @@ they're always expected to appear together on the first platform adding the tag
 (to encourage reusability in different situations). Alternatively, complex data
 may be represented in a different kind of well-established handoff data
 structure (e.g. FDT [DT]_, HOB [PI]_) that is inserted into the TL as a single
-TE. The same tag ID may occur multiple times in the TL to represent multiple
-instances of the same kind of object. Tag layouts (including the meaning of all
+TE. Tag layouts (including the meaning of all
 fields) are considered stable after being added to this specification and must
 never be changed in a backwards-incompatible way. If a backwards-incompatible
 change is desired, a new tag ID should be allocated for the new version of the
@@ -210,6 +208,13 @@ TEs should not contain explicit version numbers and instead just use the
 `data_size` value to infer how many fields exist. TE layouts which have been
 changed like this must clearly document which fields or valid values were added
 at a later time, and in what order.
+
+It is strongly recommended that entries of a given type are
+unique in the TL. If firmware designs require multiple TE instances of a given
+type, then that TE type definition should provide sufficient information for
+the TE consumer to disambiguate between all TE instances. That information can
+be, for example, a sub-type field or contained within a self-describing data
+blob.
 
 The TL must not hold pointers or addresses within its entries, which refer to
 anything in the TL. These can make it difficult to relocate the TL. TL
