@@ -47,7 +47,7 @@ Transfer list header
 
 A TL must begin with a TL header. The layout of the TL header is shown in
 :numref:`tab_tl_header`.  The presence of a TL header may be verified by
-inspecting the signature field which must contain the 4a0f_b10b value.  The
+inspecting the signature field which must contain the `0x4a0f_b10b` value.  The
 version field determines the contents of the handoff start header. The version
 will only be changed, by an update to this specification, when new TL header or
 TE header fields are defined (i.e. not when allocating new tag IDs), and all
@@ -66,12 +66,12 @@ changes will be backwards-compatible to older readers.
    * - signature
      - 0x4
      - 0x0
-     - The value of signature must be `4a0f_b10b`.
+     - The value of signature must be `0x4a0f_b10b`.
 
    * - checksum
      - 0x1
      - 0x4
-     - If enabled by the flags, the checksum is used to provide basic protection against something overwriting the TL in memory. The checksum is set to a value such that the xor over every byte in the {`tl_base_pa`, …, `tl_base_pa + used_size - 1`} address range, is equal to 0. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as 0. Note that the checksum must include the TL header, all TEs and the inter-TE padding, but must not include the range reserved for future TE additions up to total_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.). If checksums are not used, this must be 0.
+     - If enabled by the flags, the checksum is used to provide basic protection against something overwriting the TL in memory. The checksum is set to a value such that the xor over every byte in the {`tl_base_pa`, …, `tl_base_pa + used_size - 1`} address range, is equal to `0`. For the purposes of this calculation, the value of this checksum field in the TL header must be assumed as `0`. Note that the checksum must include the TL header, all TEs and the inter-TE padding, but must not include the range reserved for future TE additions up to total_size. The values of inter-TE padding bytes are not defined by this specification and may be uninitialized memory. (This means that multiple TLs with exactly the same size and contents may still have different checksum values.). If checksums are not used, this must be `0`.
 
    * - version
      - 0x1
@@ -81,22 +81,22 @@ changes will be backwards-compatible to older readers.
    * - hdr_size
      - 0x1
      - 0x6
-     - The size of this TL header in bytes. This field is set to 0x18 for the TL header layout described in this version of the table.
+     - The size of this TL header in bytes. This field is set to `0x18` for the TL header layout described in this version of the table.
 
    * - alignment
      - 0x1
      - 0x7
-     - The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is 8 so this value should be set to 3. It must be updated whenever a new TE is added with a larger requirement than the current value.
+     - The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is `8` so this value should be set to `3`. It must be updated whenever a new TE is added with a larger requirement than the current value.
 
    * - used_size
      - 0x4
      - 0x8
-     - The number of bytes within the TL that are used by TEs. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. It must be a multiple of 8 (i.e. it includes the inter-TE padding after the end of the last TE). This field must be updated when any entry is added to the TL.
+     - The number of bytes within the TL that are used by TEs. This field accounts for the size of the TL header plus the size of all the entries contained in the TL. It must be a multiple of `8` (i.e. it includes the inter-TE padding after the end of the last TE). This field must be updated when any entry is added to the TL.
 
    * - total_size
      - 0x4
      - 0xc
-     - The number of bytes occupied by the entire TL, including any spare space at the end, after `used_size`. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocate the TL and update this field accordingly, provided that the TL requirements are respected. This field must be a multiple of 8.
+     - The number of bytes occupied by the entire TL, including any spare space at the end, after `used_size`. Any entry producer must check if there is sufficient space before adding an entry to the list. Firmware can resize and/or relocate the TL and update this field accordingly, provided that the TL requirements are respected. This field must be a multiple of `8`.
 
    * - flags
      - 0x4
@@ -106,7 +106,7 @@ changes will be backwards-compatible to older readers.
    * - reserved
      - 0x4
      - 0x14
-     - Reserved word. Must be set to 0 or ignored.
+     - Reserved word. Must be set to `0` or ignored.
 
 
 TL Flags
@@ -131,7 +131,7 @@ field.
 
    * - 31:1
      - unused
-     - Reserved for future use. Must be 0.
+     - Reserved for future use. Must be `0`.
 
 
 .. _sec_tl_entry_hdr:
@@ -174,12 +174,12 @@ The TE header is defined in :numref:`tab_te_header`.
    * - hdr_size
      - 0x1
      - 0x3
-     - The size of this entry header in bytes. This field must be set to 8 for the TE header layout described in this version of the table.
+     - The size of this entry header in bytes. This field must be set to `8` for the TE header layout described in this version of the table.
 
    * - data_size
      - 0x4
      - 0x4
-     - The exact size of the data content in bytes, not including inter-TE padding. May be 0.
+     - The exact size of the data content in bytes, not including inter-TE padding. May be `0`.
 
 
 TL Contents
@@ -248,7 +248,7 @@ tags related to a particular chipset or to a particular firmware project could
 use adjacent tag numbers), but there are no predefined ranges and no
 reservations of tag ranges for specific use.
 
-The {0xff_f000, ..., 0xff_ffff} range is reserved for non-standardized use.
+The `{0xff_f000, ..., 0xff_ffff}` range is reserved for non-standardized use.
 Anyone is free to use tags from that range for any custom TE layout without
 adding their definitions to this specification first. The use of this range is
 *strongly discouraged* for anything other than local experiments or code that
@@ -301,7 +301,7 @@ Inputs:
 
 - `tl_base_addr`: Base address of the existing TL.
 
-#. Compare `tl.signature` (`tl_base_addr + 0x0`) to `4a0f_b10b`. On a mismatch,
+#. Compare `tl.signature` (`tl_base_addr + 0x0`) to `0x4a0f_b10b`. On a mismatch,
    abort (this is not a valid TL).
 
 #. Compare `tl.version` (`tl_base_addr + 0x5`) to the expected version
@@ -416,7 +416,7 @@ Inputs:
 
 - `tl_base_addr`: Base address of the TL to add a TE to.
 - `new_tag_id`: ID number of the tag for the new TE.
-- `new_alignment`: The alignment boundary as a power of 2 that the data must be aligned to.
+- `new_alignment`: The alignment boundary as a power of `2` that the data must be aligned to.
 - `new_data_size`: Size in bytes of the data to be encapsulated in the TE.
 - [data]: Data to be copied into the TE or generated on the fly.
 
@@ -455,7 +455,7 @@ Inputs:
 
 #. Check that `available_size` is larger than `0x18` (the assumed `tl.hdr_size`), otherwise abort.
 
-#. Set `tl.signature` (`tl_base_addr + 0x0`) to `4a0f_b10b`.
+#. Set `tl.signature` (`tl_base_addr + 0x0`) to `0x4a0f_b10b`.
 
 #. Set `tl.checksum` (`tl_base_addr + 0x4`) to `0x0` (for now).
 
@@ -514,13 +514,13 @@ Standard transfer entries
 
 The following entry types are currently defined:
 
-- empty entry: tag_id = 0  (:numref:`void_entry`).
-- fdt entry: tag_id = 1  (:numref:`fdt_entry`).
-- single HOB block entry: tag_id = 2 (:numref:`hob_block_entry`).
-- HOB list entry: tag_id = 3 (:numref:`hob_list_entry`).
-- ACPI table aggregate entry: tag_id = 4 (:numref:`acpi_aggr_entry`).
-- TPM event log entry: tag_id = 5 (:numref:`tpm_evlog_entry`).
-- TPM CRB base entry: tag_id = 6 (:numref:`tpm_crb_base_entry`).
+- empty entry: tag_id = `0`  (:numref:`void_entry`).
+- fdt entry: tag_id = `1`  (:numref:`fdt_entry`).
+- single HOB block entry: tag_id = `2` (:numref:`hob_block_entry`).
+- HOB list entry: tag_id = `3` (:numref:`hob_list_entry`).
+- ACPI table aggregate entry: tag_id = `4` (:numref:`acpi_aggr_entry`).
+- TPM event log entry: tag_id = `5` (:numref:`tpm_evlog_entry`).
+- TPM CRB base entry: tag_id = `6` (:numref:`tpm_crb_base_entry`).
 - Entries related to Trusted Firmware (:numref:`tf_entries`).
 
 .. _void_entry:
@@ -549,7 +549,7 @@ space up to the next TE).
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0**.
+     - The tag_id field must be set to `0`.
 
    * - hdr_size
      - 0x1
@@ -559,8 +559,8 @@ space up to the next TE).
    * - data_size
      - 0x4
      - 0x4
-     - The size of the void space in bytes. May be 0. For XFERLIST_VOID,
-       data_size *MUST* be a multiple of 8 (i.e. there must be no space left to
+     - The size of the void space in bytes. May be `0`. For XFERLIST_VOID,
+       data_size *MUST* be a multiple of `8` (i.e. there must be no space left to
        inter-TE padding after this TE).
 
    * - void_data
@@ -591,7 +591,7 @@ the flattened devicetree (FDT) [DT]_ representation.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **1**.
+     - The tag_id field must be set to `1`.
 
    * - hdr_size
      - 0x1
@@ -632,7 +632,7 @@ the TL and following the HOB list requirements defined in [PI]_.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **2**.
+     - The tag_id field must be set to `2`.
 
    * - hdr_size
      - 0x1
@@ -673,7 +673,7 @@ specified in [PI]_.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **3**.
+     - The tag_id field must be set to `3`.
 
    * - hdr_size
      - 0x1
@@ -720,7 +720,7 @@ such that the last ACPI table in this entry ends at offset
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **4**.
+     - The tag_id field must be set to `4`.
 
    * - hdr_size
      - 0x1
@@ -759,7 +759,7 @@ Specification [TCG_EFI]_.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **5**.
+     - The tag_id field must be set to `5`.
 
    * - hdr_size
      - 0x1
@@ -769,7 +769,7 @@ Specification [TCG_EFI]_.
    * - data_size
      - 0x4
      - 0x4
-     - The size of the event log in bytes + sizeof(flags) i.e. 0x4.
+     - The size of the event log in bytes + sizeof(flags) i.e. `0x4`.
 
    * - flags
      - 0x4
@@ -784,7 +784,7 @@ Specification [TCG_EFI]_.
        by reading each measurement recorded and extending it into the TPM. Once
        the measurements are extended into the TPM, then the "need_to_replay"
        flag must be cleared if the transfer list is passed to additional
-       firmware components. Default value is "0". Other bits should be set to
+       firmware components. Default value is `0`. Other bits should be set to
        zero.
 
    * - event_log
@@ -813,7 +813,7 @@ and reserved for use as a TPM Command Response Buffer interface.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **6**.
+     - The tag_id field must be set to `6`.
 
    * - hdr_size
      - 0x1
@@ -823,7 +823,7 @@ and reserved for use as a TPM Command Response Buffer interface.
    * - data_size
      - 0x4
      - 0x4
-     - This value should be set to **0xc** i.e. sizeof(crb_base_address) + sizeof(crb_size).
+     - This value should be set to `0xc`` i.e. `sizeof(crb_base_address) + sizeof(crb_size)`.
 
    * - crb_base_address
      - 0x8
@@ -866,7 +866,7 @@ the OP-TEE OS.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x100**.
+     - The tag_id field must be set to `0x100`.
 
    * - hdr_size
      - 0x1
@@ -876,7 +876,7 @@ the OP-TEE OS.
    * - data_size
      - 0x4
      - 0x4
-     - The size (in bytes) of the address of OP-TEE pageable part which must be set to **8**.
+     - The size (in bytes) of the address of OP-TEE pageable part which must be set to `8`.
 
    * - pp_addr
      - 0x8
@@ -905,7 +905,7 @@ initialize itself.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x101**.
+     - The tag_id field must be set to `0x101`.
 
    * - hdr_size
      - 0x1
@@ -956,7 +956,7 @@ software running in Secure, Non-Secure, or Realm modes.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x102**.
+     - The tag_id field must be set to `0x102`.
 
    * - hdr_size
      - 0x1
@@ -994,7 +994,7 @@ hand-over execution.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x103**.
+     - The tag_id field must be set to `0x103`.
 
    * - hdr_size
      - 0x1
@@ -1036,7 +1036,7 @@ into its memory map during platform setup. If other memory types are required
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x104**.
+     - The tag_id field must be set to `0x104`.
 
    * - hdr_size
      - 0x1
@@ -1080,7 +1080,7 @@ It may also contain some information to the SP itself.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x106**.
+     - The tag_id field must be set to `0x106`.
 
    * - hdr_size
      - 0x1
@@ -1116,7 +1116,7 @@ passed to later stages for intialisation of Mbed-TLS.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x105**.
+     - The tag_id field must be set to `0x105`.
 
    * - hdr_size
      - 0x1
@@ -1126,7 +1126,7 @@ passed to later stages for intialisation of Mbed-TLS.
    * - data_size
      - 0x4
      - 0x4
-     - This value should be set to **0x10** i.e. sizeof(heap_address) + sizeof(heap_size).
+     - This value should be set to `0x10`` i.e. `sizeof(heap_address) + sizeof(heap_size)`.
 
    * - heap_address
      - 0x8
@@ -1161,7 +1161,7 @@ subsequent images. It's usage is identical to the 64-bit form represented by
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x106**.
+     - The tag_id field must be set to `0x106`.
 
    * - hdr_size
      - 0x1
@@ -1187,7 +1187,6 @@ subsequent images. It's usage is identical to the 64-bit form represented by
    * - spsr
      - 0x4
      - hdr_size + 0x8
-
      - Saved Program Status Register.
 
    * - lr_svc
@@ -1261,7 +1260,7 @@ memory types, such as read-only memory, distinct entries should be created.
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to **0x107**.
+     - The tag_id field must be set to `0x107`.
 
    * - hdr_size
      - 0x1
@@ -1283,5 +1282,5 @@ memory types, such as read-only memory, distinct entries should be created.
      - hdr_size + 0x4
      - The size of the memory region.
 
-.. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to **8**.
+.. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
 .. |current_version| replace:: `0x1`
