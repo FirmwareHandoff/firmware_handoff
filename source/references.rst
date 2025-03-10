@@ -13,20 +13,20 @@
 References
 ==========
 
-.. [DT] `Devicetree Specification <https://www.devicetree.org/specifications/>`__
+.. [DT] `Devicetree Specification v0.4 <https://github.com/devicetree-org/devicetree-specification/releases/tag/v0.4>`__
 
-.. [PI] Volume 3:Platform Initialization -- Shared Architectural Elements, `UEFI forum <https://uefi.org/specifications>`__
+.. [PI] UEFI Platform Initialization, `PI v1.8A <https://uefi.org/specs/PI/1.8A/>`__
 
-.. [ACPI] Advanced Configuration and Power Interface (ACPI) Specification, `UEFI forum <https://uefi.org/specifications>`__
+.. [ACPI] Advanced Configuration and Power Interface (ACPI) Specification, `ACPI v6.5 <https://uefi.org/specs/ACPI/6.5_A/>`__
 
-.. [ArmARM] Arm® Architecture Reference Manual for the A-profile architecture, `ARM DDI0487 <https://developer.arm.com/documentation/ddi0487>`__
+.. [ArmARM] Arm® Architecture Reference Manual for the A-profile architecture, `ARM DDI0487 issue L.a <https://developer.arm.com/documentation/ddi0487/la/>`__
 
-.. [OPTEECore] `OP-TEE Core Architecture <https://optee.readthedocs.io/en/latest/architecture/core.html>`__
+.. [OPTEECore] `OP-TEE Core Architecture v4.5 <https://optee.readthedocs.io/en/4.5.0/architecture/core.html>`__
 
-.. [TFAFFAMB] TF-A Secure Partition Manager: `FF-A manifest binding to device tree <https://trustedfirmware-a.readthedocs.io/en/latest/components/ffa-manifest-binding.html>`__
+.. [TFAFFAMB] TF-A Secure Partition Manager: `FF-A manifest binding to device tree v2.12 <https://trustedfirmware-a.readthedocs.io/en/v2.12.0/components/ffa-manifest-binding.html>`__
 
-.. [TCG_EFI] `Trusted Computing Group EFI Protocol Specification <https://trustedcomputinggroup.org/resource/tcg-efi-protocol-specification>`__
+.. [TCG_EFI] `Trusted Computing Group EFI Protocol Specification v15 <https://trustedcomputinggroup.org/wp-content/uploads/TCG_EFI_Platform_1_22_Final_-v15.pdf>`__
 
-.. [TF_BL31] `Data structures used in the BL31 cold boot interface <https://trustedfirmware-a.readthedocs.io/en/latest/design/firmware-design.html#data-structures-used-in-the-bl31-cold-boot-interface>`__
+.. [TF_BL31] `Data structures used in the BL31 cold boot interface v2.12 <https://trustedfirmware-a.readthedocs.io/en/v2.12.0/design/firmware-design.html#data-structures-used-in-the-bl31-cold-boot-interface>`__
 
-.. [SPMCATTR] `The SPMC manifest: <https://hafnium.readthedocs.io/en/latest/secure-partition-manager/secure-partition-manager.html#spmc-manifest>`__
+.. [SPMCATTR] `The SPMC manifest v2.12: <https://hafnium.readthedocs.io/en/v2.12.0/secure-partition-manager/secure-partition-manager.html#spmc-manifest>`__
