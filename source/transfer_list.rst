@@ -968,10 +968,93 @@ software running in Secure, Non-Secure, or Realm modes.
      - 0x4
      - Size of the `entry_point_info` structure in bytes.
 
-   * - ep_info
-     - `sizeof(entry_point_info)`
+   * - ep_info_hdr
+     - 0x8
      - hdr_size
-     - Holds a single `entry_point_info` structure.
+     - Header of type :ref:`param_header<tab_param_header>` containing the
+       information about this structure. The type must be `0x1`, version `0x2`,
+       and size `0x58`.
+
+   * - pc
+     - 0x8
+     - hdr_size + 0x8
+     - Program counter (entry point into image).
+
+   * - spsr
+     - 0x4
+     - hdr_size + 0x10
+     - Saved Program Status Register.
+
+   * - x0
+     - 0x8
+     - hdr_size + 0x18
+     - Register X0.
+
+   * - x1
+     - 0x8
+     - hdr_size + 0x20
+     - Register X1.
+
+   * - x2
+     - 0x8
+     - hdr_size + 0x28
+     - Register X2.
+
+   * - x3
+     - 0x8
+     - hdr_size + 0x30
+     - Register X3.
+
+   * - x4
+     - 0x8
+     - hdr_size + 0x38
+     - Register X4.
+
+   * - x5
+     - 0x8
+     - hdr_size + 0x40
+     - Register X5.
+
+   * - x6
+     - 0x8
+     - hdr_size + 0x48
+     - Register X6.
+
+   * - x7
+     - 0x8
+     - hdr_size + 0x50
+     - Register X7.
+
+The structures header contains an attributes field which is used to encode the image's
+execution state (i.e., Secure, Non-Secure, or Realm).
+
+.. _tab_param_header:
+.. list-table::  Layout of ``param_header``.
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - type
+     - 0x1
+     - 0x0
+     - Type of the structure.
+
+   * - version
+     - 0x1
+     - 0x1
+     - Version of the structure.
+
+   * - size
+     - 0x2
+     - 0x2
+     - Size of the structure in bytes.
+
+   * - attr
+     - 0x4
+     - 0x4
+     - Structure attributes.
 
 **FF-A SP binary (XFERLIST_FFA_SP_BINARY)**
 
@@ -1210,34 +1293,7 @@ subsequent images. It's usage is identical to the 64-bit form represented by
      - hdr_size + 0x1c
      - Register R2.
 
-The structures header contains an attributes field which is used to encode the image's
-execution state (i.e., Secure, Non-Secure, or Realm).
-
-.. _tab_param_header:
-.. list-table::  Layout of ``param_header``.
-
-   * - Field
-     - Size (bytes)
-     - Offset (bytes)
-     - Description
-
-   * - type
-     - 0x1
-     - 0x0
-     - Type of the structure.
-
-   * - version
-     - 0x1
-     - 0x1
-     - Version of the structure.
-
-   * - size
-     - 0x2
-     - 0x2
-     - Size of the structure in bytes.
-
-   * - attr
-     - 0x4
+   * - r3
      - 0x4
      - hdr_size + 0x20
      - Register R3.
