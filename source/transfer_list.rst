@@ -1181,33 +1181,33 @@ subsequent images. It's usage is identical to the 64-bit form represented by
 
    * - pc
      - 0x4
-     - hdr_size + 0x4
+     - hdr_size + 0x8
      - Program counter (entry point into image).
 
    * - spsr
      - 0x4
-     - hdr_size + 0x8
+     - hdr_size + 0xc
 
      - Saved Program Status Register.
 
    * - lr_svc
      - 0x4
-     - hdr_size + 0xc
+     - hdr_size + 0x10
      - Link register.
 
    * - r0
      - 0x4
-     - hdr_size + 0x10
+     - hdr_size + 0x14
      - Register R0.
 
    * - r1
      - 0x4
-     - hdr_size + 0x14
+     - hdr_size + 0x18
      - Register R1.
 
    * - r2
      - 0x4
-     - hdr_size + 0x18
+     - hdr_size + 0x1c
      - Register R2.
 
 The structures header contains an attributes field which is used to encode the image's
@@ -1239,7 +1239,8 @@ execution state (i.e., Secure, Non-Secure, or Realm).
    * - attr
      - 0x4
      - 0x4
-     - Structure attributes.
+     - hdr_size + 0x20
+     - Register R3.
 
 **Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT32)**
 
