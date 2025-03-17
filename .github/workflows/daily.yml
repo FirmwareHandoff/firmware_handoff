@@ -1,0 +1,30 @@
+name: Nightly Sphinx Build and Link Check
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  # This allows the job to be manually triggered.
+  workflow_dispatch:
+
+jobs:
+  build-and-check-links:
+    name: "Build PDF and HTML documentation"
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin \
+            python3-sphinx latexmk texlive-latex-extra \
+            python3-sphinxcontrib.svg2pdfconverter sphinx-multiversion \
+            python3-sphinx-rtd-theme
+
+      - name: Build Sphinx documentation
+        run: |
+          make html latexpdf
+
+      - name: Check for broken links
+        run: |
+          sphinx-build -b linkcheck source/ _build/linkcheck
