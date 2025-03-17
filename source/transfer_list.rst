@@ -973,6 +973,93 @@ software running in Secure, Non-Secure, or Realm modes.
      - hdr_size
      - Holds a single `entry_point_info` structure.
 
+   * - ep_info_hdr
+     - 0x8
+     - hdr_size
+     - Header of type :ref:`param_header<tab_param_header>` containing structure
+       version, size, and attributes.
+
+   * - pc
+     - 0x8
+     - hdr_size + 0x8
+     - Program counter (entry point into image).
+
+   * - spsr
+     - 0x8
+     - hdr_size + 0x10
+     - Saved Program Status Register.
+
+   * - x0
+     - 0x8
+     - hdr_size + 0x18
+     - Register X0.
+
+   * - x1
+     - 0x8
+     - hdr_size + 0x20
+     - Register X1.
+
+   * - x2
+     - 0x8
+     - hdr_size + 0x28
+     - Register X2.
+
+   * - x3
+     - 0x8
+     - hdr_size + 0x30
+     - Register X3.
+
+   * - x4
+     - 0x8
+     - hdr_size + 0x38
+     - Register X4.
+
+   * - x5
+     - 0x8
+     - hdr_size + 0x40
+     - Register X5.
+
+   * - x6
+     - 0x8
+     - hdr_size + 0x48
+     - Register X6.
+
+   * - x7
+     - 0x8
+     - hdr_size + 0x50
+     - Register X7.
+
+The structures header contains an attributes field which is used to encode the image's
+execution state (i.e., Secure, Non-Secure, or Realm).
+
+.. _tab_param_header:
+.. list-table::  Layout of ``param_header``.
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - type
+     - 0x1
+     - 0x0
+     - Type of the structure.
+
+   * - version
+     - 0x1
+     - 0x1
+     - Version of the structure.
+
+   * - size
+     - 0x2
+     - 0x2
+     - Size of the structure in bytes.
+
+   * - attr
+     - 0x4
+     - 0x4
+     - Structure attributes.
+
 **FF-A SP binary (XFERLIST_FFA_SP_BINARY)**
 
 This entry holds a reference to an FF-A Secure Partition (SP) binary.
@@ -1181,65 +1268,39 @@ subsequent images. It's usage is identical to the 64-bit form represented by
 
    * - pc
      - 0x4
-     - hdr_size + 0x4
+     - hdr_size + 0x8
      - Program counter (entry point into image).
 
    * - spsr
      - 0x4
-     - hdr_size + 0x8
+     - hdr_size + 0xc
 
      - Saved Program Status Register.
 
    * - lr_svc
      - 0x4
-     - hdr_size + 0xc
+     - hdr_size + 0x10
      - Link register.
 
    * - r0
      - 0x4
-     - hdr_size + 0x10
+     - hdr_size + 0x14
      - Register R0.
 
    * - r1
      - 0x4
-     - hdr_size + 0x14
+     - hdr_size + 0x18
      - Register R1.
 
    * - r2
      - 0x4
-     - hdr_size + 0x18
+     - hdr_size + 0x1c
      - Register R2.
 
-The structures header contains an attributes field which is used to encode the image's
-execution state (i.e., Secure, Non-Secure, or Realm).
-
-.. _tab_param_header:
-.. list-table::  Layout of ``param_header``.
-
-   * - Field
-     - Size (bytes)
-     - Offset (bytes)
-     - Description
-
-   * - type
-     - 0x1
-     - 0x0
-     - Type of the structure.
-
-   * - version
-     - 0x1
-     - 0x1
-     - Version of the structure.
-
-   * - size
-     - 0x2
-     - 0x2
-     - Size of the structure in bytes.
-
-   * - attr
+   * - r3
      - 0x4
-     - 0x4
-     - Structure attributes.
+     - hdr_size + 0x20
+     - Register R3.
 
 **Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT32)**
 
