@@ -506,6 +506,9 @@ Inputs:
 #. If `has_checksum`, xor the 4 bytes from `new_tl_base + 0xc` to
    `new_tl_base + 0x10` with `tl.checksum` (`new_tl_base + 0x4`).
 
+.. note::
+   When relocating a TL, the implementation should account for security considerations by either
+   scrubbing the TL signature or completely erasing the older TL, depending on the threat model.
 
 .. _sec_std_entries:
 
