@@ -400,6 +400,23 @@ Inputs:
 
    #. `void_te.data_size` =  `old_void_data_size - align8(new_data_size + 0x8)`
 
+Removing a TE
+^^^^^^^^^^^^^
+
+Inputs:
+
+- `te_base_addr`: Base address of the TE to be removed
+
+#. Invoke `Adding a void TE`_ with following arguments
+
+   #. `void_te.base_addr` = `te_base_addr`
+
+   #. `void_te.size` = `te.data_size + te.hdr_size - 0x8`
+
+#. *(Optional)* Implementations may perform memory management by inspecting adjacent entries
+   and coalescing consecutive `XFERLIST_VOID` entries into a single larger one. This can help
+   reduce fragmentation and improve reuse of space in the Transfer List.
+
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
