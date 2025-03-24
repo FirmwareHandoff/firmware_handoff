@@ -409,6 +409,25 @@ Inputs:
    #. If `has_checksum`, xor the 8 bytes from `te_base_addr` to
       `te_base_addr + 0x8` with `tl.checksum`.
 
+Removing a TE
+^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the TL from which TE to be deleted
+- `tag_id`: ID number of the tag to be deleted
+- `scrub_data`: Boolean option to scrub TE data
+
+#. Validate the TL header as mentioned in `Validating a TL header`_
+
+#. Locate the `te_base_addr` of the TE to be removed by iterating through the TL.
+
+#. Mark the TE as void by setting its tag_id to XFERLIST_VOID
+
+#. Erase the TE data if `scrub_data` is TRUE
+
+#. If checksum is enabled, recalculate and update `tl.checksum`
+
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
