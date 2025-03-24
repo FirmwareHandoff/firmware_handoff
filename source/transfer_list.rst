@@ -398,6 +398,19 @@ Inputs:
 
    #. `void_te.size` =  `old_void_data_size - align8(new_data_size + 0x8)`
 
+Removing a TE
+^^^^^^^^^^^^^
+
+Inputs:
+
+- `te_base_addr`: Base address of the TE to be removed
+
+#. Invoke `Adding a void TE`_ with following arguments
+
+   #. `void_te.base_addr` = `te_base_addr`
+
+   #. `void_te.size` = `te.data_size + te.hdr_size - 0x8`
+
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
