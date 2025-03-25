@@ -391,23 +391,12 @@ Inputs:
    `te_base_addr` with `tl.checksum`.
 
 #. If an existing XFERLIST_VOID TE was chosen to be overwritten in step 1, and
-   `old_void_data_size - new_data_size` is greater or equal to `0x8`:
+   `old_void_data_size - new_data_size` is greater or equal to `0x8` then call
+   `Adding a void TE`_ with following arguments:
 
-   #. Use `te_base_addr + align8(new_data_size + 0x8)` as the new `te_base_addr`
-      for a new XFERLIST_VOID tag.
+   #. `void_te.base_addr` = `te_base_addr + align8(new_data_size + 0x8)`
 
-   #. If `has_checksum`, xor the 8 bytes from `te_base_addr` to
-      `te_base_addr + 0x8` with `tl.checksum`.
-
-   #. Set `te.tag_id` (`te_base_addr + 0x0`) to `0x0` (XFERLIST_VOID).
-
-   #. Set `te.hdr_size` (`te_base_addr + 0x3`) to `0x8`.
-
-   #. Set `te.data_size` (`te_base_addr + 0x4`) to
-      `old_void_data_size - align8(new_data_size) - 0x8`.
-
-   #. If `has_checksum`, xor the 8 bytes from `te_base_addr` to
-      `te_base_addr + 0x8` with `tl.checksum`.
+   #. `void_te.size` =  `old_void_data_size - align8(new_data_size + 0x8)`
 
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -509,6 +498,30 @@ Inputs:
 .. note::
    After relocating a TL, implementations should consider scrubbing the old TL memory if it contains
    any secrets that might be accessible to later untrusted software.
+
+Helper Routines
+^^^^^^^^^^^^^^^
+
+Adding a void TE
+~~~~~~~~~~~~~~~~
+
+Inputs:
+
+- `te_base_addr`: Base address where void TE to be added
+- `data_size`: Size in bytes of the data to be encapsulated in void TE
+
+#. If `has_checksum`, xor `data_size + 0x8` bytes starting at `te_base_addr` with `tl.checksum`
+
+#. Set `te.tag_id` (`te_base_addr + 0x0`) to `0x0` (XFERLIST_VOID)
+
+#. Set `te.hdr_size` (`te_base_addr + 0x3`) to `0x8`
+
+#. Set `te.data_size` (`te_base_addr + 0x4`) to `align8(data_size)`
+
+#. *(optional)* Set the `data_size` bytes starting at `te_base_addr + te.hdr_size` to 0x0
+
+#. If `has_checksum`, xor `te.hdr_size + data_size` bytes starting at `te_base_addr` with `tl.checksum`
+
 
 .. _sec_std_entries:
 
