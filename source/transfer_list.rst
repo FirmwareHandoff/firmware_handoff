@@ -417,6 +417,39 @@ Inputs:
    and coalescing consecutive `XFERLIST_VOID` entries into a single larger one. This can help
    reduce fragmentation and improve reuse of space in the Transfer List.
 
+Overwriting a TE
+^^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `te_base_addr`: Base address of the Transfer Entry (TE) to be overwritten
+- `new_data_size`: Size in bytes of the new data to be encapsulated in the TE
+- [data]: Data to be copied into the TE
+
+#. If `te.data_size` is smaller than `new_data_size`, the overwrite operation must return an error.
+   The caller is then responsible for:
+
+   #. Reclaiming the existing space by calling `Adding a void TE`_ with `te_base_addr` and `te.data_size`.
+
+   #. Adding a new TE by invoking `Adding a new TE`_ with appropriate arguments.
+
+#. If `has_checksum`, subtract the sum of `te.data_size` bytes starting at
+   `te_base_addr + te.hdr_size` from `tl.checksum`.
+
+#. Set `te.data_size` (`te_base_addr + 0x4`) to `align8(new_data_size)`.
+
+#. Copy or generate the new TE data into `te_base_addr + te.hdr_size`.
+
+#. If `has_checksum`, add the sum of `align8(new_data_size)` bytes starting at
+   `te_base_addr + te.hdr_size` to `tl.checksum`.
+
+#. If `te.data_size - align8(new_data_size)` is greater than or equal to `0x8`, create a new
+   void TE to fill the remaining space by calling `Adding a void TE`_ with the following arguments:
+
+   #. `te_base_addr` = `te_base_addr + align8(new_data_size + te.hdr_size)`
+
+   #. `data_size` = `te.data_size - align8(new_data_size - 0x8)`
+
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
