@@ -411,6 +411,35 @@ Inputs:
 
    #. `void_te.size` = `te.data_size + te.hdr_size - 0x8`
 
+Overwriting a TE
+^^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the TL from which TE to be overwritten
+- `te_base_addr`: Base address of the TE to be overwritten
+- `new_data_size`: Size in bytes of the data to be encapsulated in the TE
+- [data]: Data to be copied into the TE
+
+#. If `te.data_size` is smaller than `new_data_size`, abort this operation here and instead first
+   follow `Adding a void TE`_ with `te_base_addr` and `te.data_size`, then follow `Adding a new TE`_
+   with `tl_base_addr`, `tag_id`, `new_data_size` and `[data]`
+
+#. If `has_checksum`, xor the `te.data_size` bytes starting at `te_base_addr + te.hdr_size` with `tl.checksum`
+
+#. Set `te.data_size` (`te_base_addr + 0x4`) to `align8(new_data_size)`
+
+#. Copy or generate the new TE data into `te_base_addr + te.hdr_size`
+
+#. If `has_checksum`, xor the `te.hdr_size + new_data_size` bytes starting at `te_base_addr` with `tl.checksum`
+
+#. If `te.data_size - new_data_size` is greater or equal to `0x8` then call
+   `Adding a void TE`_ with following arguments:
+
+   #. `void.te.base_addr` = `te_base_addr + te.hdr_size + align8(new_data_size)`
+
+   #. `void.te.size` =  `te.data_size - align8(new_data_size) - 0x8`
+
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
