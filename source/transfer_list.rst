@@ -434,6 +434,35 @@ Inputs:
 
 #. If checksum is enabled, recalculate and update `tl.checksum`
 
+Overwriting a TE
+^^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the TL from which TE to be overwritten
+- `tag_id`: ID number of the tag to be overwritten
+- `new_data_size`: Size in bytes of the data to be encapsulated in the TE
+- [data]: Data to be copied into the TE
+
+#. Validate the TL header as mentioned in :ref:`Validating a TL header`
+
+#. Locate the `te_base_addr` of the TE to be overwritten by iterating through the TL
+
+#. Ensure that `te.data_size` is greater or equal to `new_data_size`
+
+#. Erase the old TE data from `te_base_addr + 0x8` until  `te.data_size`
+
+#. Copy the TE data into `te_base_addr + 0x8`
+
+#. If `te.data_size - new_data_size` is greater or equal to `0x8` then call
+   `Adding a void TE`_ with following arguments:
+
+   #. `void.te.base_addr` = `te_base_addr + align8(new_data_size + 0x8)`
+
+   #. `void.te.size` =  `te.data_size - align8(new_data_size)`
+
+#. If checksum is enabled, recalculate and update `tl.checksum`
+
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
