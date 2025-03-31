@@ -1,4 +1,5 @@
 [![Build Status](https://github.com/FirmwareHandoff/firmware_handoff/actions/workflows/main.yml/badge.svg)](https://github.com/FirmwareHandoff/firmware_handoff/actions/workflows/main.yml)
+[![Daily Status](https://github.com/FirmwareHandoff/firmware_handoff/actions/workflows/daily.yml/badge.svg)](https://github.com/FirmwareHandoff/firmware_handoff/actions/workflows/daily.yml)
 [![Release Version](https://img.shields.io/github/v/release/FirmwareHandoff/firmware_handoff?label=release)](https://github.com/FirmwareHandoff/firmware_handoff/releases)
 
 This repository contains the Firmware Handoff specification, which defines a
