@@ -34,7 +34,7 @@ of 8, after the end of the TE[0].
 Transfer list requirements
 --------------------------
 
-**R1:** The tl_base_pa address must be at a 8-byte boundary.
+**R1:** The `tl_base_pa` address must be non-zero and at an 8-byte aligned boundary.
 
 **R2:** All fields defined in this specification must be stored in memory with little-endian byte order.
 
