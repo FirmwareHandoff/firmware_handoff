@@ -971,7 +971,7 @@ software running in Secure, Non-Secure, or Realm modes.
    * - ep_info_hdr
      - 0x8
      - hdr_size
-     - Header of type :ref:`param_header<tab_param_header>` containing the
+     - Header of type :ref:`param_header<tab_param_header>` containing
        information about this structure. The type must be `0x1`, version `0x2`,
        and size `0x58`.
 
@@ -1259,7 +1259,7 @@ subsequent images. It's usage is identical to the 64-bit form represented by
    * - ep_info_hdr
      - 0x8
      - hdr_size
-     - Header of type :ref:`param_header<tab_param_header>` containing the
+     - Header of type :ref:`param_header<tab_param_header>` containing
        information about this structure. The type must be `0x1`, version `0x2`,
        and size `0x24`.
 
