@@ -1244,7 +1244,7 @@ subsequent images. It's usage is identical to the 64-bit form represented by
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to `0x106`.
+     - The tag_id field must be set to `0x107`.
 
    * - hdr_size
      - 0x1
