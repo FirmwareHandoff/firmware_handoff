@@ -843,7 +843,41 @@ Entries related to Trusted Firmware
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following entry types are defined for Trusted Firmware projects,
-including TF-A, OP-TEE and Hafnium:
+including TF-A, OP-TEE and Hafnium.
+
+.. _tf_entries_summary:
+.. list-table:: Summary of Trusted Firmware Entries
+   :header-rows: 1
+
+   * - Tag ID
+     - Description
+
+   * - :ref:`0x100 <tab_optee_pageable_part_address>`
+     - OP-TEE Pageable Part Address
+
+   * - :ref:`0x101 <tab_dt_spmc_manifest>`
+     - DT Formatted SPMC Manifest
+
+   * - :ref:`0x102 <tab_entry_point_info>`
+     - AArch64 Entry Point Info
+
+   * - :ref:`0x103 <tab_ffa_sp_binary>`
+     - FF-A SP Binary
+
+   * - :ref:`0x104 <tab_rw_mem_layout>`
+     - RW Memory Layout (64-bit)
+
+   * - :ref:`0x105 <tab_mbedtls_heap_info>`
+     - Mbed-TLS Heap Info
+
+   * - :ref:`0x106 <tab_dt_ffa_manifest>`
+     - DT Formatted FF-A Manifest
+
+   * - :ref:`0x107 <tab_rw_mem_layout32>`
+     - RW Memory Layout (32-bit)
+
+   * - :ref:`0x108 <tab_entry_point_info32>`
+     - AArch32 Entry Point Info
 
 **OP-TEE pageable part address entry layout (XFERLIST_OPTEE_PAGEABLE_PART_ADDR)**
 
