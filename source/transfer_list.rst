@@ -1221,6 +1221,48 @@ passed to later stages for intialisation of Mbed-TLS.
      - hdr_size + 0x8
      - Size of memory region.
 
+**Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT32)**
+
+This entry type holds the 32-bit variant of
+:ref:`XFERLIST_RW_MEM_LAYOUT64<64_bit_mem_layout>`. It is a structure used to
+describe the layout of a read-write memory region. TF-A utilizes this entry type
+to notify BL2 of the available memory for read-write operations. Note, for other
+memory types, such as read-only memory, distinct entries should be created.
+
+.. _tab_rw_mem_layout32:
+.. list-table:: Layout for a RW memory layout entry (32-bit variant)
+   :widths: 2 5 5 6
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to `0x107`.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the layout in bytes.
+
+   * - addr
+     - 0x4
+     - hdr_size
+     - The 32-bit base address of the memory region.
+
+   * - size
+     - 0x4
+     - hdr_size + 0x4
+     - The size of the memory region.
+
 **AArch32 executable entry point information (XFERLIST_EXEC_EP_INFO32)**
 
 This entry type holds the 32-bit variant of the `entry_point_info`
@@ -1244,7 +1286,7 @@ subsequent images. It's usage is identical to the 64-bit form represented by
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to `0x107`.
+     - The tag_id field must be set to `0x108`.
 
    * - hdr_size
      - 0x1
@@ -1297,48 +1339,6 @@ subsequent images. It's usage is identical to the 64-bit form represented by
      - 0x4
      - hdr_size + 0x20
      - Register R3.
-
-**Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT32)**
-
-This entry type holds the 32-bit variant of
-:ref:`XFERLIST_RW_MEM_LAYOUT64<64_bit_mem_layout>`. It is a structure used to
-describe the layout of a read-write memory region. TF-A utilizes this entry type
-to notify BL2 of the available memory for read-write operations. Note, for other
-memory types, such as read-only memory, distinct entries should be created.
-
-.. _tab_rw_mem_layout32:
-.. list-table:: Layout for a RW memory layout entry (32-bit variant)
-   :widths: 2 5 5 6
-
-   * - Field
-     - Size (bytes)
-     - Offset (bytes)
-     - Description
-
-   * - tag_id
-     - 0x3
-     - 0x0
-     - The tag_id field must be set to `0x107`.
-
-   * - hdr_size
-     - 0x1
-     - 0x3
-     - |hdr_size_desc|
-
-   * - data_size
-     - 0x4
-     - 0x4
-     - The size of the layout in bytes.
-
-   * - addr
-     - 0x4
-     - hdr_size
-     - The 32-bit base address of the memory region.
-
-   * - size
-     - 0x4
-     - hdr_size + 0x4
-     - The size of the memory region.
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
 .. |current_version| replace:: `0x1`
