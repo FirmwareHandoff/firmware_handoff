@@ -343,6 +343,23 @@ Inputs:
 
    #. Add `align8(te.hdr_size + te.data_size)` to `te_base_addr`.
 
+
+Adding a void TE
+^^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `te_base_addr`: Base address where void TE to be added
+- `size`: Total size available for void TE
+
+#. Set `te.tag_id` (`te_base_addr + 0x0`) to `0x0` (XFERLIST_VOID)
+
+#. Set `te.hdr_size` (`te_base_addr + 0x3`) to `0x8`
+
+#. Set `te.data_size` (`te_base_addr + 0x4`) to `align8(size) - 0x8`
+
+#. If `has_checksum`, xor the 8 bytes from `te_base_addr` to `te_base_addr + 0x8` with `tl.checksum`
+
 Adding a new TE
 ^^^^^^^^^^^^^^^
 
@@ -391,23 +408,60 @@ Inputs:
    `te_base_addr` with `tl.checksum`.
 
 #. If an existing XFERLIST_VOID TE was chosen to be overwritten in step 1, and
-   `old_void_data_size - new_data_size` is greater or equal to `0x8`:
+   `old_void_data_size - new_data_size` is greater or equal to `0x8` then call
+   `Adding a void TE`_ with following arguments:
 
-   #. Use `te_base_addr + align8(new_data_size + 0x8)` as the new `te_base_addr`
-      for a new XFERLIST_VOID tag.
+   #. `void.te.base_addr` = `te_base_addr + align8(new_data_size + 0x8)`
 
-   #. If `has_checksum`, xor the 8 bytes from `te_base_addr` to
-      `te_base_addr + 0x8` with `tl.checksum`.
+   #. `void.te.size` =  `old_void_data_size - align8(new_data_size)`
 
-   #. Set `te.tag_id` (`te_base_addr + 0x0`) to `0x0` (XFERLIST_VOID).
+Removing a TE
+^^^^^^^^^^^^^
 
-   #. Set `te.hdr_size` (`te_base_addr + 0x3`) to `0x8`.
+Inputs:
 
-   #. Set `te.data_size` (`te_base_addr + 0x4`) to
-      `old_void_data_size - align8(new_data_size) - 0x8`.
+- `tl_base_addr`: Base address of the TL from which TE to be deleted
+- `tag_id`: ID number of the tag to be deleted
+- `scrub_data`: Boolean option to scrub TE data
 
-   #. If `has_checksum`, xor the 8 bytes from `te_base_addr` to
-      `te_base_addr + 0x8` with `tl.checksum`.
+#. Validate the TL header as mentioned in `Validating a TL header`_
+
+#. Locate the `te_base_addr` of the TE to be removed by iterating through the TL.
+
+#. Mark the TE as void by setting its tag_id to XFERLIST_VOID
+
+#. Erase the TE data if `scrub_data` is TRUE
+
+#. If checksum is enabled, recalculate and update `tl.checksum`
+
+Overwriting a TE
+^^^^^^^^^^^^^^^^
+
+Inputs:
+
+- `tl_base_addr`: Base address of the TL from which TE to be overwritten
+- `tag_id`: ID number of the tag to be overwritten
+- `new_data_size`: Size in bytes of the data to be encapsulated in the TE
+- [data]: Data to be copied into the TE
+
+#. Validate the TL header as mentioned in :ref:`Validating a TL header`
+
+#. Locate the `te_base_addr` of the TE to be overwritten by iterating through the TL
+
+#. Ensure that `te.data_size` is greater or equal to `new_data_size`
+
+#. Erase the old TE data from `te_base_addr + 0x8` until  `te.data_size`
+
+#. Copy the TE data into `te_base_addr + 0x8`
+
+#. If `te.data_size - new_data_size` is greater or equal to `0x8` then call
+   `Adding a void TE`_ with following arguments:
+
+   #. `void.te.base_addr` = `te_base_addr + align8(new_data_size + 0x8)`
+
+   #. `void.te.size` =  `te.data_size - align8(new_data_size)`
+
+#. If checksum is enabled, recalculate and update `tl.checksum`
 
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -506,6 +560,9 @@ Inputs:
 #. If `has_checksum`, xor the 4 bytes from `new_tl_base + 0xc` to
    `new_tl_base + 0x10` with `tl.checksum` (`new_tl_base + 0x4`).
 
+.. note::
+   When relocating a TL, the implementation should account for security considerations by either
+   scrubbing the TL signature or completely erasing the older TL, depending on the threat model.
 
 .. _sec_std_entries:
 
