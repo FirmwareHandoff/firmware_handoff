@@ -843,7 +843,41 @@ Entries related to Trusted Firmware
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following entry types are defined for Trusted Firmware projects,
-including TF-A, OP-TEE and Hafnium:
+including TF-A, OP-TEE and Hafnium.
+
+.. _tf_entries_summary:
+.. list-table:: Summary of Trusted Firmware Entries
+   :header-rows: 1
+
+   * - Tag ID
+     - Description
+
+   * - :ref:`0x100 <tab_optee_pageable_part_address>`
+     - OP-TEE Pageable Part Address
+
+   * - :ref:`0x101 <tab_dt_spmc_manifest>`
+     - DT Formatted SPMC Manifest
+
+   * - :ref:`0x102 <tab_entry_point_info>`
+     - AArch64 Entry Point Info
+
+   * - :ref:`0x103 <tab_ffa_sp_binary>`
+     - FF-A SP Binary
+
+   * - :ref:`0x104 <tab_rw_mem_layout>`
+     - RW Memory Layout (64-bit)
+
+   * - :ref:`0x105 <tab_mbedtls_heap_info>`
+     - Mbed-TLS Heap Info
+
+   * - :ref:`0x106 <tab_dt_ffa_manifest>`
+     - DT Formatted FF-A Manifest
+
+   * - :ref:`0x107 <tab_rw_mem_layout32>`
+     - RW Memory Layout (32-bit)
+
+   * - :ref:`0x108 <tab_entry_point_info32>`
+     - AArch32 Entry Point Info
 
 **OP-TEE pageable part address entry layout (XFERLIST_OPTEE_PAGEABLE_PART_ADDR)**
 
@@ -1221,6 +1255,48 @@ passed to later stages for intialisation of Mbed-TLS.
      - hdr_size + 0x8
      - Size of memory region.
 
+**Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT32)**
+
+This entry type holds the 32-bit variant of
+:ref:`XFERLIST_RW_MEM_LAYOUT64<64_bit_mem_layout>`. It is a structure used to
+describe the layout of a read-write memory region. TF-A utilizes this entry type
+to notify BL2 of the available memory for read-write operations. Note, for other
+memory types, such as read-only memory, distinct entries should be created.
+
+.. _tab_rw_mem_layout32:
+.. list-table:: Layout for a RW memory layout entry (32-bit variant)
+   :widths: 2 5 5 6
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to `0x107`.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the layout in bytes.
+
+   * - addr
+     - 0x4
+     - hdr_size
+     - The 32-bit base address of the memory region.
+
+   * - size
+     - 0x4
+     - hdr_size + 0x4
+     - The size of the memory region.
+
 **AArch32 executable entry point information (XFERLIST_EXEC_EP_INFO32)**
 
 This entry type holds the 32-bit variant of the `entry_point_info`
@@ -1244,7 +1320,7 @@ subsequent images. It's usage is identical to the 64-bit form represented by
    * - tag_id
      - 0x3
      - 0x0
-     - The tag_id field must be set to `0x107`.
+     - The tag_id field must be set to `0x108`.
 
    * - hdr_size
      - 0x1
@@ -1297,48 +1373,6 @@ subsequent images. It's usage is identical to the 64-bit form represented by
      - 0x4
      - hdr_size + 0x20
      - Register R3.
-
-**Read-Write Memory Layout Entry Layout (XFERLIST_RW_MEM_LAYOUT32)**
-
-This entry type holds the 32-bit variant of
-:ref:`XFERLIST_RW_MEM_LAYOUT64<64_bit_mem_layout>`. It is a structure used to
-describe the layout of a read-write memory region. TF-A utilizes this entry type
-to notify BL2 of the available memory for read-write operations. Note, for other
-memory types, such as read-only memory, distinct entries should be created.
-
-.. _tab_rw_mem_layout32:
-.. list-table:: Layout for a RW memory layout entry (32-bit variant)
-   :widths: 2 5 5 6
-
-   * - Field
-     - Size (bytes)
-     - Offset (bytes)
-     - Description
-
-   * - tag_id
-     - 0x3
-     - 0x0
-     - The tag_id field must be set to `0x107`.
-
-   * - hdr_size
-     - 0x1
-     - 0x3
-     - |hdr_size_desc|
-
-   * - data_size
-     - 0x4
-     - 0x4
-     - The size of the layout in bytes.
-
-   * - addr
-     - 0x4
-     - hdr_size
-     - The 32-bit base address of the memory region.
-
-   * - size
-     - 0x4
-     - hdr_size + 0x4
-     - The size of the memory region.
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
 .. |current_version| replace:: `0x1`
