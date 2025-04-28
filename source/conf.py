@@ -69,6 +69,7 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
+linkcheck_ignore = [r'https://uefi\.org/specs/.*',]
 
 # -- Options for HTML output -------------------------------------------------
 
