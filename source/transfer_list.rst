@@ -280,7 +280,7 @@ specification.
      - Reserved. (Can later be used to extend standardized range if necessary.)
 
    * - 0xff_f000 -- 0xff_ffff
-     - Non-standardized range. Tag IDs in this range may be used without allocation in this specification. This range should not be used for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator. Tags in this range are not tracked in this repository and PRs to add tag defintions for this range will not be accepted.
+     - Non-standardized range. Tag IDs in this range may be used without allocation in this specification. This range should not be used for anything other than local experimentation or closed-source components that are entirely under the control of a single platform firmware integrator. Tags in this range are not tracked in this repository and PRs to add tag definitions for this range will not be accepted.
 
 
 .. _sec_operations:
@@ -498,7 +498,7 @@ Inputs:
 
 #. Copy `tl.used_size` bytes from `tl_base_addr` to `new_tl_base`.
 
-#. If `has_checksum`, xor the the 4 bytes from `new_tl_base + 0xc`
+#. If `has_checksum`, xor the 4 bytes from `new_tl_base + 0xc`
    to `new_tl_base + 0x10` with `tl.checksum` (`new_tl_base + 0x4`).
 
 #. Set `tl.total_size` (`new_tl_base + 0xc`) to `target_size - (new_tl_base - target_base)`.
@@ -701,7 +701,7 @@ offset `hdr_size` from the start of the entry. Since ACPI tables usually have an
 alignment requirement larger than 8, writers may first need to create an
 XFERLIST_VOID padding entry so that the subsequent `te_base_addr + te.hdr_size`
 will be correctly aligned. Any subsequent ACPI tables must be located at the
-next 16-byte alligned address following the preceding ACPI table. Note that each
+next 16-byte aligned address following the preceding ACPI table. Note that each
 ACPI table has a `Length` field in the ACPI table header [ACPI]_, which must be
 used to determine the end of the ACPI table.  The `data_size` value must be set
 such that the last ACPI table in this entry ends at offset
@@ -1138,7 +1138,7 @@ memory region.
 For example, TF-A uses it to convey to BL2 the extent of memory it has available
 to perform read-write operations on. BL2 maps the memory described by the layout
 into its memory map during platform setup. If other memory types are required
-(i.e. read-only memory) separate TE's should be defined.
+(i.e. read-only memory) separate TEs should be defined.
 
 .. _tab_rw_mem_layout:
 .. list-table:: Layout for a RW memory layout entry
@@ -1177,7 +1177,7 @@ into its memory map during platform setup. If other memory types are required
 
 **DT formatted FF-A manifest entry layout (XFERLIST_DT_FFA_MANIFEST)**
 
-This entry type holds the FF-A manifest image whice is in DT format [DT]_,
+This entry type holds the FF-A manifest image which is in DT format [DT]_,
 as described in [TFAFFAMB]_.
 This manifest contains the SP (Secure Partition) configuration, consumed
 by the SPMC at boot time.
@@ -1218,7 +1218,7 @@ It may also contain some information to the SP itself.
 
 Specifies the location and size of a memory region, carved out for
 stack-based memory allocation in Mbed-TLS. The buffer address and size are
-passed to later stages for intialisation of Mbed-TLS.
+passed to later stages for initialisation of Mbed-TLS.
 
 .. _tab_mbedtls_heap_info:
 .. list-table:: Mbed-TLS heap info type layout
