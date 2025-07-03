@@ -80,7 +80,7 @@ Register R1 contains the TL signature, to provide guarantees to a receiver that
 R3 holds the tl_base_pa.
 
 The 24 least significant bits in register R1 contains the 24 least significant
-bits of TL signature. The signature provides guarantees to a receiver that X3
+bits of TL signature. The signature provides guarantees to a receiver that R3
 holds the tl_base_pa. The 8 most significant bits of R1 contain the version of
 the register convention being used. :numref:`tab_aarch32_convention` specifies the version `1` of the AArch32
 handoff register convention.
