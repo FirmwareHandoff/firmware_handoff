@@ -1374,5 +1374,40 @@ subsequent images. It's usage is identical to the 64-bit form represented by
      - hdr_size + 0x20
      - Register R3.
 
+**Primary GPT corruption information (XFERLIST_GPT_INFO)**
+
+This entry holds an indication of whether the primary GPT is corrupted or not.
+
+.. _tab_gpt_info:
+.. list-table:: GPT info type layout
+   :widths: 2 2 2 8
+   :header-rows: 1
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to `0x109`.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x1
+     - 0x4
+     - The size of the primary GPT corruption information in bytes.
+
+   * - gpt_corrupted_info
+     - data_size
+     - hdr_size
+     - The gpt_corrupted_info field contains the primary GPT corruption information.
+
+
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
 .. |current_version| replace:: `0x1`
