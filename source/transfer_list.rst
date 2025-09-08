@@ -879,6 +879,9 @@ including TF-A, OP-TEE and Hafnium.
    * - :ref:`0x108 <tab_entry_point_info32>`
      - AArch32 Entry Point Info
 
+   * - :ref:`0x109 <tab_gpt_info>`
+     - GPT Error Info
+
 **OP-TEE pageable part address entry layout (XFERLIST_OPTEE_PAGEABLE_PART_ADDR)**
 
 This entry type holds the address of OP-TEE pageable part which is described in
@@ -1373,6 +1376,44 @@ subsequent images. It's usage is identical to the 64-bit form represented by
      - 0x4
      - hdr_size + 0x20
      - Register R3.
+
+**GUID Partition Table (GPT) error information (XFERLIST_GPT_ERROR_INFO)**
+
+This entry holds an indication of the type of GPT error.
+`gpt_error_info` contains all possible GPT error information.
+It is an 8-bit value. Bit 0 indicates that the secondary GPT is being used,
+due to the corruption of the primary GPT header.
+Bits [7:1] are reserved for future use.
+
+.. _tab_gpt_info:
+.. list-table:: GPT info type layout
+   :widths: 2 2 2 8
+   :header-rows: 1
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to `0x109`.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x1
+     - 0x4
+     - The size of the GPT error information in bytes, it is always 1 byte.
+
+   * - gpt_error_info
+     - data_size
+     - hdr_size
+     - The `gpt_error_info` field contains GPT error information.
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
 .. |current_version| replace:: `0x1`
