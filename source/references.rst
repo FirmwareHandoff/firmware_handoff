@@ -23,7 +23,7 @@ References
 
 .. [OPTEECore] `OP-TEE Core Architecture v4.5 <https://optee.readthedocs.io/en/4.5.0/architecture/core.html>`__
 
-.. [TB_FW_CONFIG] `Trusted Boot Firmware Configuration bindings <https://trustedfirmware-a.readthedocs.io/en/latest/components/fconf/tb_fw_bindings.html>`__
+.. [TB_FW_CONFIG] `Trusted Boot Firmware Configuration bindings <https://review.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a/+/c6c882a42795da82b18d2d7dff1265bf2a1a6aab/docs/components/fconf/tb_fw_bindings.rst>`__
 
 .. [TFAFFAMB] TF-A Secure Partition Manager: `FF-A manifest binding to device tree v2.12 <https://trustedfirmware-a.readthedocs.io/en/v2.12.0/components/ffa-manifest-binding.html>`__
 
