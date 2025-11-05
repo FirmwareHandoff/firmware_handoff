@@ -23,7 +23,7 @@ Firmware Handoff documentation.
       Application Processor
 
    Blob List
-      Bloblist is an U-boot implementation of the Firmware Handoff protocol
+      Bloblist is an U-Boot implementation of the Firmware Handoff protocol
 
    DT
       Device Tree
