@@ -6,6 +6,8 @@ This repository contains the Firmware Handoff specification, which defines a
 data structure to transfer essential configuration information between firmware
 stages during platform initialization.
 
+Note that versions 0.9 and 1.0 of this specification are withdrawn and should not be used for product development.
+
 The documentation is generated using the Sphinx framework. A version of this
 specification, rendered in HTML, is available
 [here](https://firmwarehandoff.github.io/firmware_handoff/).
@@ -47,11 +49,8 @@ The output of these build commands goes into subdirectory `build`.
 Status
 ======
 
-The first release of the specification has been published. We are currently in
-the implementation phase, looking at various target projects, including U-Boot,
-coreboot, TF-A and Tianocore. Once this is done we will review the result to see
-if any serious flaws have come to light, meaning that changes are needed.  If
-so, these will be undertaken in each project.
+As of November 2025, version 1.0 is withdrawn and should not be used.
+Version 1.0 was withdrawn because products shipped with a TL header cheksum implementation that differed from the version 1.0 definition.
 
-By the end of 2024, the spec will be considered stable and will be published
-as version 1. From there on, backwards compatibility will be maintained.
+A version 2.0 of the specification is currently under work and will be published shortly.
+Implementations should adopt version 2.0 of the specification.
