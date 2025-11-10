@@ -837,6 +837,58 @@ and reserved for use as a TPM Command Response Buffer interface.
      - Size of CRB.
 
 
+.. _dto_entry:
+
+DT overlay entry layout (XFERLIST_DT_OVERLAY)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Devicetree Overlay is defined in [DTO]_. The Devicetree Overlay TE contains
+a devicetree overlay blob in the data section.
+The intent of the Devicetree Overlay entry is to modify the live devicetree in
+U-Boot or kernel.
+A DT overlay consumer applys each overlay to its target base devicetree when
+both have the same top-level compatible strings.
+
+.. _tab_dto:
+.. list-table:: DT overlay type layout
+   :widths: 2 2 2 8
+   :header-rows: 1
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to `7`.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the following subtype and DT overlay in bytes.
+
+   * - subtype
+     - 0x8
+     - 0x8
+     - When multiple overlays exist with the same top-level compatible string,
+       a DT overlay consumer can use subtype as an additional identification
+       when looking for a specific overlay.
+       It is fully implementation-defined per the agreement between the DT
+       overlay producer and consumer. Default value is `0`.
+
+   * - dto
+     - data_size - 0x8
+     - hdr_size + 0x8
+     - The dto field contains the DT overlay.
+
+
 .. _tf_entries:
 
 Entries related to Trusted Firmware
