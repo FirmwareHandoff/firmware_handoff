@@ -40,7 +40,7 @@ Transfer list requirements
 
 **R3:** The base address of a TE must be the 8-byte aligned address immediately after the end of the previous entry (or TL header, if the TE is the first entry on the TL).
 
-**R4:** When relocating the TL, the offset from `tl_base_pa` to the nearest alignment boundary specified by the `alignment` field in the TL header must be preserved.
+**R4:** When relocating the TL, the offset between the `tl_base_pa`, prior to relocation, and the nearest alignment boundary (_k_ * `alignment`, where _k_ is a positive integer) must be preserved. R4 ensures the alignment requirements of every TE, in the TL, are met after relocation.
 
 Transfer list header
 --------------------
@@ -86,7 +86,7 @@ changes will be backwards-compatible to older readers.
    * - alignment
      - 0x1
      - 0x7
-     - The maximum alignment required by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is `8` so this value should be set to `3`. It must be updated whenever a new TE is added with a larger requirement than the current value.
+     - The greatest alignment requirement imposed by any TE in the TL, specified as a power of two. For a newly created TL, the alignment requirement is `8` byte-aligned so this value should be set to `3`. This field must be updated whenever a new TE is added with a larger requirement than the current value.
 
    * - used_size
      - 0x4
