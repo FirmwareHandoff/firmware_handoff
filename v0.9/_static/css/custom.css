@@ -1,0 +1,15 @@
+/*
+ * SPDX-License-Identifier: CC-BY-SA-4.0
+ * SPDX-FileCopyrightText: Copyright The Firmware Handoff Specification Contributors
+ */
+
+/*
+ * Set the white-space property of tables to normal.
+ * With this setting sequences of whitespace inside
+ * a table will collapse into a single whitespace,
+ * and text will wrap when necessary.
+ */
+
+.wy-table-responsive table td {
+    white-space: normal;
+}
