@@ -44,6 +44,19 @@ make html
 
 The output of these build commands goes into subdirectory `build`.
 
+Reference implementation
+========================
+
+The specification has a library reference implementation, its hosted upstream in the following
+repository: [Transfer List Library](https://github.com/TF-Shared/transfer-list-library).
+
+The library can be leveraged by different firmware projects. It implements all the relevant
+operations on the Transfer List.
+
+The U-Boot project hosts another library implementation, referred to as Bloblist, which it can be found at
+[Bloblist Source](https://github.com/u-boot/u-boot/blob/master/common/bloblist.c).
+
+
 Status
 ======
 
