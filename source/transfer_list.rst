@@ -1417,4 +1417,4 @@ Bits [7:1] are reserved for future use.
      - The `gpt_error_info` field contains GPT error information.
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
-.. |current_version| replace:: `0x1`
+.. |current_version| replace:: `0x2`
