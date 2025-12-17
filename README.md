@@ -65,5 +65,5 @@ Status
 As of November 2025, version 1.0 is withdrawn and should not be used.
 Version 1.0 was withdrawn because products shipped with a TL header cheksum implementation that differed from the version 1.0 definition.
 
-A version 2.0 of the specification is currently under work and will be published shortly.
+Version 2.0 of the specification is the latest release.
 Implementations should adopt version 2.0 of the specification.
