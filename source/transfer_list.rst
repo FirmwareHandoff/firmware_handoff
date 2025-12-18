@@ -292,6 +292,11 @@ This section describes the valid operations that may be performed on a TL in
 more detail, in order to clarify how to use the various fields and to serve as a
 guideline for implementation.
 
+.. note::
+This section assumes te.hdr_size is 0x8 for all TE entries. This is used consistently throughout the examples.
+In the future, if entries with different header sizes are introduced, some operations may need to explicitly
+take te.hdr_size as an argument.
+
 Validating a TL header
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -338,8 +343,7 @@ Inputs:
       is smaller or equal to `tl.used_size`, otherwise abort (the TL is corrupted).
 
    #. If `te.tag_id` (`te_base_addr + 0x0`) is a known tag, interpret the data
-      at `te_base_addr + te.hdr_size` accordingly. (Do not hardcode the value
-      for `te.hdr_size`, even for known tags!) Otherwise, ignore the tag and
+      at `te_base_addr + te.hdr_size` accordingly. Otherwise, ignore the tag and
       proceed with the next step.
 
    #. Add `align8(te.hdr_size + te.data_size)` to `te_base_addr`.
@@ -362,14 +366,14 @@ Inputs:
 
    #. Use the `te_base_addr` of this tag for the rest of the operation.
 
-   #. If `has_checksum`, Subtract the sum of `align8(new_data_size + 0x8)` bytes
+   #. If `has_checksum`, Subtract the sum of `align8(new_data_size + te.hdr_size)` bytes
       starting at `te_base_addr` from `tl.checksum`.
 
    #. Skip the next step (step 2) with all its substeps.
 
 #. Calculate `te_base_addr` as `tl_base_addr + tl.used_size`.
 
-   #. If `tl.total_size - tl.used_size` is smaller than `align8(new_data_size + 0x8)`,
+   #. If `tl.total_size - tl.used_size` is smaller than `align8(new_data_size + te.hdr_size)`,
       abort (not enough room to add TE).
 
    #. If `has_checksum`, subtract the sum of the 4 bytes from
@@ -386,19 +390,19 @@ Inputs:
 
 #. Set `te.data_size` (`te_base_addr + 0x4`) to `new_data_size`.
 
-#. Copy or generate the TE data into `te_base_addr + 0x8`.
+#. Copy or generate the TE data into `te_base_addr + te.hdr_size`.
 
-#. If `has_checksum`, add the sum of `align8(new_data_size + 0x8)` bytes
+#. If `has_checksum`, add the sum of `align8(new_data_size + te.hdr_size)` bytes
    starting at `te_base_addr` to `tl.checksum`.
 
 #. If an existing XFERLIST_VOID TE was chosen to be overwritten in step 1, and
-   `old_void_data_size - new_data_size` is greater than or equal to `0x8`, then
+   `old_void_data_size - new_data_size` is greater than or equal to `te.hdr_size`, then
    create a new void TE to fill the remaining space by calling `Adding a void TE`_
    with the following arguments:
 
-   #. `void_te.base_addr` = `te_base_addr + align8(new_data_size + 0x8)`
+   #. `void_te.base_addr` = `te_base_addr + align8(new_data_size + te.hdr_size)`
 
-   #. `void_te.data_size` =  `old_void_data_size - align8(new_data_size + 0x8)`
+   #. `void_te.data_size` =  `old_void_data_size - align8(new_data_size + te.hdr_size)`
 
 Removing a TE
 ^^^^^^^^^^^^^
@@ -411,7 +415,7 @@ Inputs:
 
    #. `void_te.base_addr` = `te_base_addr`
 
-   #. `void_te.size` = `te.data_size + te.hdr_size - 0x8`
+   #. `void_te.size` = `te.data_size`
 
 #. *(Optional)* Implementations may perform memory management by inspecting adjacent entries
    and coalescing consecutive `XFERLIST_VOID` entries into a single larger one. This can help
@@ -443,12 +447,12 @@ Inputs:
 #. If `has_checksum`, add the sum of `align8(new_data_size)` bytes starting at
    `te_base_addr + te.hdr_size` to `tl.checksum`.
 
-#. If `te.data_size - align8(new_data_size)` is greater than or equal to `0x8`, create a new
+#. If `te.data_size - align8(new_data_size)` is greater than or equal to `te.hdr_size`, create a new
    void TE to fill the remaining space by calling `Adding a void TE`_ with the following arguments:
 
    #. `te_base_addr` = `te_base_addr + align8(new_data_size + te.hdr_size)`
 
-   #. `data_size` = `te.data_size - align8(new_data_size - 0x8)`
+   #. `data_size` = `te.data_size - align8(new_data_size - te.hdr_size)`
 
 Adding a new TE with special data alignment requirement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
