@@ -929,7 +929,7 @@ The following tag ID ranges are used by that specification.
    * - Tag ID range
      - Description
 
-   * - 0x100 -- 0x109
+   * - 0x100 -- 0x11f
      - TF-A and Arm ecosystem Secure World Software Transfer Entries
 
 Whenever a new tag ID range is declared in the ancillary specification [FWH_Project_Entries]_, or an existing tag ID range is extended, :numref:`tab_entries_summary` must be updated accordingly.
