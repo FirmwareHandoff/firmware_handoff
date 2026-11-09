@@ -32,3 +32,7 @@ References
 .. [SPMCATTR] `The SPMC manifest v2.12: <https://hafnium.readthedocs.io/en/v2.12.0/secure-partition-manager/secure-partition-manager.html#spmc-manifest>`__
 
 .. [DTO] `Devicetree Overlay <https://docs.kernel.org/devicetree/overlay-notes.html>`__
+
+.. [TBBR] Trusted Board Boot Requirements (TBBR) specification, `DEN0006 <https://support.arm.com/documentation/den0006/latest>`__
+
+.. [TPM_PART2] Trusted Platform Module Library Part 2: Structures, `TCG TPM 2.0 r1.59 <https://medias.cdn.trustedcomputinggroup.org/production/TCG_TPM_2_r1p59_Part2_Structures_pub_eba2e82d6a.pdf>`__
