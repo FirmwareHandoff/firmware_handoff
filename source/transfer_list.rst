@@ -1008,6 +1008,9 @@ including TF-A, OP-TEE and Hafnium.
    * - :ref:`0x109 <tab_gpt_info>`
      - GPT Error Info
 
+   * - :ref:`0x10A <tab_auth_image>`
+     - Authenticated Image Info
+
 **OP-TEE pageable part address entry layout (XFERLIST_OPTEE_PAGEABLE_PART_ADDR)**
 
 This entry type holds the address of OP-TEE pageable part which is described in
@@ -1540,6 +1543,94 @@ Bits [7:1] are reserved for future use.
      - data_size
      - hdr_size
      - The `gpt_error_info` field contains GPT error information.
+
+**Authenticated image information (XFERLIST_AUTH_IMAGE_INFO)**
+
+This entry describes an image that an earlier boot stage has authenticated.
+It records the image's identifier, digest, and location.
+Fields prefixed with `vendor_reserved` are for platform-specific data and have
+no meaning defined by this specification.
+
+.. _tab_auth_image:
+.. list-table:: Authenticated image info type layout
+   :widths: 2 2 2 8
+   :header-rows: 1
+
+   * - Field
+     - Size (bytes)
+     - Offset (bytes)
+     - Description
+
+   * - tag_id
+     - 0x3
+     - 0x0
+     - The tag_id field must be set to `0x10A`.
+
+   * - hdr_size
+     - 0x1
+     - 0x3
+     - |hdr_size_desc|
+
+   * - data_size
+     - 0x4
+     - 0x4
+     - The size of the following fields in bytes. Must be set to `0x78`.
+
+   * - image_id
+     - 0x4
+     - hdr_size
+     - Identifier of the image, as defined in the TBBR specification [TBBR]_.
+       The image IDs are listed in `tbbr_img_def_exp.h <https://github.com/ARM-software/arm-trusted-firmware/blob/master/include/export/common/tbbr/tbbr_img_def_exp.h>`__.
+
+   * - hash_alg
+     - 0x4
+     - hdr_size + 0x4
+     - Hash algorithm used to compute `digest`, encoded as a TPM_ALG_ID value
+       defined in section 6.3 of [TPM_PART2]_.
+
+   * - digest
+     - 0x40
+     - hdr_size + 0x8
+     - Digest of the image computed with the algorithm in `hash_alg`. Bytes
+       beyond the length of that digest are unused.
+
+   * - image_base
+     - 0x8
+     - hdr_size + 0x48
+     - Base address of the image.
+
+   * - image_size
+     - 0x8
+     - hdr_size + 0x50
+     - Size of the image in bytes.
+
+   * - vendor_reserved_0
+     - 0x8
+     - hdr_size + 0x58
+     - Vendor-specific data. Opaque to this specification and defined by the
+       vendor. A consumer without an agreed definition for this field should
+       ignore it.
+
+   * - vendor_reserved_1
+     - 0x8
+     - hdr_size + 0x60
+     - Vendor-specific data. Opaque to this specification and defined by the
+       vendor. A consumer without an agreed definition for this field should
+       ignore it.
+
+   * - vendor_reserved_2
+     - 0x8
+     - hdr_size + 0x68
+     - Vendor-specific data. Opaque to this specification and defined by the
+       vendor. A consumer without an agreed definition for this field should
+       ignore it.
+
+   * - vendor_reserved_3
+     - 0x8
+     - hdr_size + 0x70
+     - Vendor-specific data. Opaque to this specification and defined by the
+       vendor. A consumer without an agreed definition for this field should
+       ignore it.
 
 .. |hdr_size_desc| replace:: The size of this entry header in bytes must be set to `8`.
 .. |current_version| replace:: `0x2`
